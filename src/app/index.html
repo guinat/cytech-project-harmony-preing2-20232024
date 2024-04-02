@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<link
+			rel="icon"
+			href="favicon.ico"
+			type="image/x-icon" />
+		<link
+			rel="shortcut icon"
+			href="favicon.ico"
+			type="image/x-icon" />
+		<title>Harmony</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script>
+			tailwind.config = {
+				theme: {
+					container: {
+						center: true,
+						padding: "2rem",
+					},
+					screens: {
+						sm: "480px",
+						md: "768px",
+						lg: "976px",
+						xl: "1440px",
+					},
+					fontFamily: {
+						sans: ["", "sans-serif"],
+						serif: ["", "serif"],
+					},
+					extend: {
+						colors: {
+							primary: "#da373d",
+							secondary: "#72e2ed",
+						},
+						backgroundImage: {
+							hero: "url(assets/hero/hero-bg.png)",
+						},
+					},
+				},
+			};
+		</script>
+	</head>
+	<body>
+		<div id="header"></div>
+		<div id="hero"></div>
+		<script src="script.js"></script>
+	</body>
+</html>
