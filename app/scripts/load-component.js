@@ -11,3 +11,6 @@ function loadComponent(componentPath, elementId) {
 
 loadComponent("../components/header.html", "header");
 loadComponent("../components/hero.html", "hero");
+loadComponent("../components/sign-in-form.html", "sign-in-form");
+loadComponent("../components/sign-up-form.html", "sign-up-form");
+loadComponent("../components/demo.html", "demo");
