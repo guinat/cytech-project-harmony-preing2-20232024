@@ -10,9 +10,9 @@
 </head>
 
 <body>
-    <?php require_once 'src/components/Header/header.php'; ?>
-    <?php require_once 'src/components/Hero/hero.php'; ?>
-    <?php require_once 'src/components/Footer/footer.php'; ?>
+    <?php require_once 'src/components/header/header.php'; ?>
+    <?php require_once 'src/components/hero/hero.php'; ?>
+    <?php require_once 'src/components/footer/footer.php'; ?>
 </body>
 
 </html>
