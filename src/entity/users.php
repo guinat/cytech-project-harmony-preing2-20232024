@@ -60,6 +60,10 @@ function createUser($username, $password)
 {
     $csvFile = '../data/users.csv';
 
+    if (usernameExists($username, $csvFile)) {
+        throw new Exception("This username is already taken.");
+    }
+
     $lastId = getLastUserId($csvFile);
     $userId = $lastId + 1;
 
@@ -72,6 +76,20 @@ function createUser($username, $password)
     }
 
     return null;
+}
+
+function usernameExists($username, $csvFile)
+{
+    if (($handle = fopen($csvFile, 'r')) !== FALSE) {
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            if ($data[1] == $username) {
+                fclose($handle);
+                return true;
+            }
+        }
+        fclose($handle);
+    }
+    return false;
 }
 
 function getLastUserId($csvFile)
