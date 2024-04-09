@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $user->getId();
             $_SESSION['username'] = $user->getUsername();
 
-            header('Location: /templates/pages/welcome.php');
+            header('Location: /templates/pages/profile.php');
             exit;
         } else {
             $_SESSION['error_message'] = "Error during registration.";
