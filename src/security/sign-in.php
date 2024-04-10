@@ -22,11 +22,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($userFound) {
-        header('Location: ../../templates/pages/welcome.php');
+        header('Location: ../pages/welcome.php');
         exit;
     } else {
         $_SESSION['error_message'] = 'Incorrect credentials.';
-        header('Location: ../../templates/pages/sign-in.php');
+        header('Location: ../pages/sign-in.php');
         exit;
     }
 }

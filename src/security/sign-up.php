@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($password !== $confirmPassword) {
         $_SESSION['error_message'] = "Passwords do not match.";
-        header('Location: /templates/pages/sign-up.php');
+        header('Location: ../pages/sign-up.php');
         exit;
     }
 
@@ -21,16 +21,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $user->getId();
             $_SESSION['username'] = $user->getUsername();
 
-            header('Location: /templates/pages/profile.php');
+            header('Location: ../pages/profile.php');
             exit;
         } else {
             $_SESSION['error_message'] = "Error during registration.";
-            header('Location: /templates/pages/sign-up.php');
+            header('Location: ../pages/sign-up.php');
             exit;
         }
     } catch (Exception $e) {
         $_SESSION['error_message'] = $e->getMessage();
-        header('Location: /templates/pages/sign-up.php');
+        header('Location: ../pages/sign-up.php');
         exit;
     }
 }
