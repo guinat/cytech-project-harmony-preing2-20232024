@@ -25,30 +25,31 @@ class UserEntity
     private $idealMatchDescription;
     private $harmony;
 
-    public function __construct($id, $username, $password, $firstName, $lastName, $gender, $dateOfBirth, $country, $city, $lookingFor, $musicPreferences, $photos, $occupation, $smokingStatus, $hobbies, $interests, $profileHeadline, $favoriteQuote, $bio, $aboutMe, $idealMatchDescription, $harmony)
+    public function __construct($id, $username, $password)
     {
         $this->id = $id;
         $this->setUsername($username);
         $this->setPassword($password);
-        $this->setFirstName($firstName);
-        $this->setLastName($lastName);
-        $this->setGender($gender);
-        $this->setDateOfBirth($dateOfBirth);
-        $this->setCountry($country);
-        $this->setCity($city);
-        $this->setLookingFor($lookingFor);
-        $this->setMusicPreferences($musicPreferences);
-        $this->setPhotos($photos);
-        $this->setOccupation($occupation);
-        $this->setSmokingStatus($smokingStatus);
-        $this->setHobbies($hobbies);
-        $this->setInterests($interests);
-        $this->setProfileHeadline($profileHeadline);
-        $this->setFavoriteQuote($favoriteQuote);
-        $this->setBio($bio);
-        $this->setAboutMe($aboutMe);
-        $this->setIdealMatchDescription($idealMatchDescription);
-        $this->harmony = $harmony;
+
+        $this->firstName = '';
+        $this->lastName = '';
+        $this->gender = '';
+        $this->dateOfBirth = '';
+        $this->country = '';
+        $this->city = '';
+        $this->lookingFor = '';
+        $this->musicPreferences = [];
+        $this->photos = [];
+        $this->occupation = '';
+        $this->smokingStatus = '';
+        $this->hobbies = '';
+        $this->interests = '';
+        $this->profileHeadline = '';
+        $this->favoriteQuote = '';
+        $this->bio = '';
+        $this->aboutMe = '';
+        $this->idealMatchDescription = '';
+        $this->harmony = '';
     }
 
     // Getters
@@ -176,17 +177,13 @@ class UserEntity
 
     public function setFirstName($firstName)
     {
-        if (empty($firstName)) {
-            throw new Exception("First name cannot be empty.");
-        }
+        $this->validateFirstName($firstName);
         $this->firstName = $firstName;
     }
 
     public function setLastName($lastName)
     {
-        if (empty($lastName)) {
-            throw new Exception("Last name cannot be empty.");
-        }
+        $this->validateLastName($lastName);
         $this->lastName = $lastName;
     }
 
@@ -201,7 +198,7 @@ class UserEntity
 
     public function setDateOfBirth($dateOfBirth)
     {
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateOfBirth)) {
+        if (!$this->validateDateOfBirth($dateOfBirth)) {
             throw new Exception("Invalid date format. Expected YYYY-MM-DD.");
         }
         $this->dateOfBirth = $dateOfBirth;
@@ -209,7 +206,7 @@ class UserEntity
 
     public function setCountry($country)
     {
-        if (empty($country)) {
+        if (!is_string($country)) {
             throw new Exception("Country cannot be empty.");
         }
         $this->country = $country;
@@ -225,7 +222,7 @@ class UserEntity
 
     public function setLookingFor($lookingFor)
     {
-        $validOptions = ['Male', 'Female', 'Both', 'Other'];
+        $validOptions = ['Male', 'Female', 'Both'];
         if (!in_array($lookingFor, $validOptions)) {
             throw new Exception("Invalid option for 'looking for'.");
         }
@@ -234,34 +231,32 @@ class UserEntity
 
     public function setMusicPreferences($musicPreferences)
     {
-        if (!is_array($musicPreferences)) {
-            throw new Exception("Music preferences should be an array.");
+        if (!is_string($musicPreferences) || empty($musicPreferences)) {
+            throw new Exception("Musics & ... should be a string.");
         }
         $this->musicPreferences = $musicPreferences;
     }
 
     public function setPhotos($photos)
     {
-        if (!is_array($photos)) {
-            throw new Exception("Photos should be an array.");
+        if (!is_array($photos) || count($photos) < 2) {
+            throw new Exception("Photos should be an array with at least 2 photos.");
         }
         $this->photos = $photos;
     }
 
+
     public function setOccupation($occupation)
     {
-        if (empty($occupation)) {
-            throw new Exception("Occupation cannot be empty.");
+        if (!is_string($occupation)) {
+            throw new Exception("Occupation must be a string.");
         }
         $this->occupation = $occupation;
     }
 
     public function setSmokingStatus($smokingStatus)
     {
-        $validStatuses = ['Yes', 'No'];
-        if (!in_array($smokingStatus, $validStatuses)) {
-            throw new Exception("Invalid smoking status.");
-        }
+
         $this->smokingStatus = $smokingStatus;
     }
 
@@ -283,40 +278,40 @@ class UserEntity
 
     public function setProfileHeadline($profileHeadline)
     {
-        if (empty($profileHeadline)) {
-            throw new Exception("Profile headline cannot be empty.");
+        if (!is_string($profileHeadline)) {
+            throw new Exception("Profile headline must be a string.");
         }
         $this->profileHeadline = $profileHeadline;
     }
 
     public function setFavoriteQuote($favoriteQuote)
     {
-        if (empty($favoriteQuote)) {
-            throw new Exception("Favorite quote cannot be empty.");
+        if (!is_string($favoriteQuote)) {
+            throw new Exception("Favorite must be a string.");
         }
         $this->favoriteQuote = $favoriteQuote;
     }
 
     public function setBio($bio)
     {
-        if (empty($bio)) {
-            throw new Exception("Bio cannot be empty.");
+        if (!is_string($bio)) {
+            throw new Exception("Bio must be a string.");
         }
         $this->bio = $bio;
     }
 
     public function setAboutMe($aboutMe)
     {
-        if (empty($aboutMe)) {
-            throw new Exception("About me cannot be empty.");
+        if (!is_string($aboutMe)) {
+            throw new Exception("About me must be a string.");
         }
         $this->aboutMe = $aboutMe;
     }
 
     public function setIdealMatchDescription($idealMatchDescription)
     {
-        if (empty($idealMatchDescription)) {
-            throw new Exception("Ideal match description cannot be empty.");
+        if (!is_string($idealMatchDescription)) {
+            throw new Exception("Ideal match description must be a string.");
         }
         $this->idealMatchDescription = $idealMatchDescription;
     }
@@ -331,6 +326,32 @@ class UserEntity
             && preg_match('/[^\w]/', $password);
     }
 
+    private function validateFirstName($field)
+    {
+        if (!is_string($field) || empty($field)) {
+            throw new Exception("First Name must be a non-empty string.");
+        }
+        if (strlen($field) > 255) {
+            throw new Exception("First Name be longer than 255 characters.");
+        }
+        if (preg_match('/\d/', $field)) {
+            throw new Exception("First Name cannot contain numbers.");
+        }
+    }
+
+    private function validateLastName($field)
+    {
+        if (!is_string($field) || empty($field)) {
+            throw new Exception("Last Name must be a non-empty string.");
+        }
+        if (strlen($field) > 255) {
+            throw new Exception("Last Name be longer than 255 characters.");
+        }
+        if (preg_match('/\d/', $field)) {
+            throw new Exception("Last Name cannot contain numbers.");
+        }
+    }
+
     private function validateDateOfBirth($date)
     {
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
@@ -338,48 +359,17 @@ class UserEntity
         }
 
         list($year, $month, $day) = explode('-', $date);
-        return checkdate((int)$month, (int)$day, (int)$year);
-    }
-
-    private function validateMusicPreferences($musicPreferences)
-    {
-        if (!is_array($musicPreferences)) {
+        if (!checkdate((int)$month, (int)$day, (int)$year)) {
             return false;
         }
 
-        foreach ($musicPreferences as $preference) {
-            if (!is_string($preference) || empty($preference)) {
-                return false;
-            }
-        }
+        $currentYear = date('Y');
+        $age = $currentYear - $year;
 
-        return true;
+        return $age >= 18 && $age <= 118;
     }
-
-    private function validatePhotos($photos)
-    {
-        if (!is_array($photos)) {
-            return false;
-        }
-
-        foreach ($photos as $photo) {
-            if (!filter_var($photo, FILTER_VALIDATE_URL)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function validateStringField($field)
-    {
-        return is_string($field) && !empty($field);
-    }
-
-    // TODO:
 }
 
-// TODO:
 function usernameExists($username, $csvFile)
 {
     if (($handle = fopen($csvFile, 'r')) !== FALSE) {
@@ -414,13 +404,21 @@ function createUser($username, $password)
         throw new Exception("This username is already taken.");
     }
 
-    $lastId = getLastUserId($csvFile);
-    $userId = $lastId + 1;
+    $lastId = getLastUserId($csvFile) + 1;
 
-    $user = new UserEntity($userId, $username, $password);
+    $user = new UserEntity(
+        $lastId,
+        $username,
+        $password,
+    );
 
     if (($handle = fopen($csvFile, 'a')) !== FALSE) {
-        fputcsv($handle, [$user->getId(), $user->getUsername(), $user->getPassword()]);
+        $csvRow = [
+            $user->getId(),
+            $user->getUsername(),
+            $user->getPassword(),
+        ];
+        fputcsv($handle, $csvRow);
         fclose($handle);
         return $user;
     }
@@ -455,4 +453,23 @@ function updateUserProfile($userId, $dataToUpdate, $csvFile)
     }
 
     return $dataUpdated;
+}
+
+function getUserById($userId, $csvFile)
+{
+    if (($handle = fopen($csvFile, 'r')) !== FALSE) {
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            if ($data[0] == $userId) {
+                $user = new UserEntity(
+                    $data[0],
+                    $data[1],
+                    $data[2],
+                );
+                fclose($handle);
+                return $user;
+            }
+        }
+        fclose($handle);
+    }
+    return null;
 }

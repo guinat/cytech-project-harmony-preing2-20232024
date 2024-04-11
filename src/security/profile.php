@@ -1,100 +1,96 @@
 <?php
+require_once '../entity/users.php';
+require_once '../utils/utils.php';
+
 session_start();
+try {
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $_SESSION['form_values'] = $_POST;
 
-    $userId = $_SESSION['user_id'] ?? null;
-    if (!$userId) {
-        echo 'User ID not found in session.';
-        exit;
-    }
+        $userId = $_SESSION['user_id'] ?? null;
+        if (!$userId) {
+            echo 'User ID not found in session.';
+            exit;
+        }
 
-    $firstName = sanitizeInput($_POST['first_name'] ?? '');
-    $lastName = sanitizeInput($_POST['last_name'] ?? '');
-    $gender = sanitizeInput($_POST['gender'] ?? '');
-    $birthDay = sanitizeInput($_POST['birth_day'] ?? '');
-    $birthMonth = sanitizeInput($_POST['birth_month'] ?? '');
-    $birthYear = sanitizeInput($_POST['birth_year'] ?? '');
-    $country = sanitizeInput($_POST['country'] ?? '');
-    $city = sanitizeInput($_POST['city'] ?? '');
-    $lookingFor = sanitizeInput($_POST['looking_for'] ?? '');
-    $occupation = sanitizeInput($_POST['occupation'] ?? '');
-    $smokingStatus = sanitizeInput($_POST['smoking'] ?? '');
-    $profileHeadline = sanitizeInput($_POST['profile_headline'] ?? '');
-    $favoriteQuote = sanitizeInput($_POST['favorite_quote'] ?? '');
-    $bio = sanitizeInput($_POST['bio'] ?? '');
-    $aboutMe = sanitizeInput($_POST['about_me'] ?? '');
-    $idealMatchDescription = sanitizeInput($_POST['ideal_match_description'] ?? '');
-    $hobbies = sanitizeInput($_POST['hobbies'] ?? '');
-    $interests = sanitizeInput($_POST['interests'] ?? '');
+        $user = getUserById($userId, '../data/users.csv');
+        if (!$user) {
+            throw new Exception('User not found.');
+        }
 
-    $uploadedPhotos = [];
-    $uploadDir = '../data/photos/';
-    $photoFields = ['photo1', 'photo2', 'photo3', 'photo4'];
+        $user->setFirstName(sanitizeInput($_POST['first_name'] ?? ''));
+        $user->setLastName(sanitizeInput($_POST['last_name'] ?? ''));
+        $user->setGender(sanitizeInput($_POST['gender'] ?? ''));
+        $user->setDateOfBirth(sanitizeInput($_POST['birth_year']) . '-' . sanitizeInput($_POST['birth_month']) . '-' . sanitizeInput($_POST['birth_day']));
+        $user->setCountry(sanitizeInput($_POST['country'] ?? ''));
+        $user->setCity(sanitizeInput($_POST['city'] ?? ''));
+        $user->setLookingFor(sanitizeInput($_POST['looking_for'] ?? ''));
+        $user->setOccupation(sanitizeInput($_POST['occupation'] ?? ''));
+        $user->setSmokingStatus(sanitizeInput($_POST['smoking'] ?? ''));
+        $user->setHobbies(sanitizeInput($_POST['hobbies'] ?? ''));
+        $user->setInterests(sanitizeInput($_POST['interests'] ?? ''));
+        $user->setProfileHeadline(sanitizeInput($_POST['profile_headline'] ?? ''));
+        $user->setFavoriteQuote(sanitizeInput($_POST['favorite_quote'] ?? ''));
+        $user->setBio(sanitizeInput($_POST['bio'] ?? ''));
+        $user->setAboutMe(sanitizeInput($_POST['about_me'] ?? ''));
+        $user->setIdealMatchDescription(sanitizeInput($_POST['ideal_match_description'] ?? ''));
+        $user->setMusicPreferences(sanitizeInput($_POST['selected_music'] ?? ''));
 
-    foreach ($photoFields as $photoField) {
-        if (isset($_FILES[$photoField]) && $_FILES[$photoField]['error'] == UPLOAD_ERR_OK) {
-            $fileName = $_SESSION['username'] . "_" . $photoField . ".png";
-            $filePath = $uploadDir . $fileName;
+        $uploadedPhotos = [];
+        $uploadDir = '../data/photos/';
+        $photoFields = ['photo1', 'photo2', 'photo3', 'photo4'];
 
-            if (move_uploaded_file($_FILES[$photoField]['tmp_name'], $filePath)) {
-                $uploadedPhotos[$photoField] = $filePath;
+        foreach ($photoFields as $photoField) {
+            if (isset($_FILES[$photoField]) && $_FILES[$photoField]['error'] == UPLOAD_ERR_OK) {
+                $fileName = $_SESSION['username'] . "_" . $photoField . ".png";
+                $filePath = $uploadDir . $fileName;
+
+                if (move_uploaded_file($_FILES[$photoField]['tmp_name'], $filePath)) {
+                    $uploadedPhotos[$photoField] = $filePath;
+                }
             }
         }
-    }
 
-    $errors = [];
-    if (empty($firstName) || empty($lastName)) {
-        $errors[] = 'First name and last name are required.';
-    }
+        $user->setPhotos($uploadedPhotos);
+        $userPhotos = $user->getPhotos();
 
-    if (!validateDate($birthDay, $birthMonth, $birthYear)) {
-        $errors[] = 'Invalid date of birth.';
-    }
-
-    if (empty($errors)) {
-        $csvFile = '../data/users.csv';
-        $role = 'ROLE_USER';
-        $hrmny = 0;
 
         $dataToUpdate = [
-            3 => $role,
-            4 => $firstName,
-            5 => $lastName,
-            6 => $gender,
-            7 => $birthYear . '-' . $birthMonth . '-' . $birthDay,
-            8 => $country,
-            9 => $city,
-            10 => $lookingFor,
-            11 => implode(',', $selectedMusics),
-            12 => $uploadedPhotos['photo1'] ?? '',
-            13 => $uploadedPhotos['photo2'] ?? '',
-            14 => $uploadedPhotos['photo3'] ?? '',
-            15 => $uploadedPhotos['photo4'] ?? '',
-            16 => $occupation,
-            17 => $smokingStatus,
-            18 => $hobbies,
-            19 => $interests,
-            20 => $profileHeadline,
-            21 => $favoriteQuote,
-            22 => $bio,
-            23 => $aboutMe,
-            24 => $idealMatchDescription,
-            25 => $hrmny
+            3 => 'ROLE_USER',  // Role
+            4 => $user->getFirstName(), // First Name
+            5 => $user->getLastName(), // Last Name
+            6 => $user->getGender(), // Gender
+            7 => $user->getDateOfBirth(), // Date of Birth
+            8 => $user->getCountry(), // Country
+            9 => $user->getCity(), // City
+            10 => $user->getLookingFor(), // Looking For
+            11 => $user->getMusicPreferences(), // Music Preferences
+            12 => $userPhotos['photo1'] ?? '', // Required Photo 1
+            13 => $userPhotos['photo2'] ?? '', // Required Photo 2
+            14 => $userPhotos['photo3'] ?? '', // Additional Photo 1
+            15 => $userPhotos['photo4'] ?? '', // Additional Photo 2
+            16 => $user->getOccupation(), // Occupation
+            17 => $user->getSmokingStatus(), // Smoking Status
+            18 => $user->getHobbies(), // Hobbies
+            19 => $user->getInterests(), // Interests
+            20 => $user->getProfileHeadline(), // Profile Headline
+            21 => $user->getFavoriteQuote(), // Favorite Quote
+            22 => $user->getBio(), // Bio
+            23 => $user->getAboutMe(), // About Me
+            24 => $user->getIdealMatchDescription(), // Ideal Match Description
+            25 => '0' // Harmony Score
         ];
 
-        if (updateUserProfile($userId, $dataToUpdate, $csvFile)) {
-            header('Location: ../pages/welcome.php');
-            exit();
-        } else {
-            echo 'Error updating data in CSV file.';
+
+        if (!updateUserProfile($userId, $dataToUpdate, '../data/users.csv')) {
+            throw new Exception('Error updating data in CSV file.');
         }
-    } else {
-        echo 'Errors encountered during form submission:';
-        echo '<ul>';
-        foreach ($errors as $error) {
-            echo '<li>' . $error . '</li>';
-        }
-        echo '</ul>';
+        header('Location: ../pages/welcome.php');
+        exit();
     }
+} catch (Exception $e) {
+    $_SESSION['error_message'] = $e->getMessage();
+    header('Location: ../pages/profile.php');
+    exit;
 }
