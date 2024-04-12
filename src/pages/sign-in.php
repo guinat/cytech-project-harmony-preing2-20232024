@@ -20,17 +20,10 @@ session_start();
     <title>Sign In</title>
 </head>
 
-<body class="font-montserrat bg-gray-600">
-    <?php require_once '../../src/components/header/header.php'; ?>
-
-    <section class="container mx-auto mt-4">
-        <div id="SignUpModal" class="flex justify-center mb-24 mt-24 items-center">
-            <div class="border border-black p-5 rounded-lg relative">
-                <h2 class="text-lg font-bold mt-4 mb-4">Sign In to Harmony</h2>
-                <?php require_once '../../src/components/form/sign-in.php'; ?>
-            </div>
-        </div>
-    </section>
+<body class="bg-[url('/assets/components/hero/bg-hero-2.jpeg')] bg-cover bg-center bg-no-repeat bg-fixed font-montserrat">
+    <?php require_once '../components/header/header.php'; ?>
+    
 </body>
+
 
 </html>
