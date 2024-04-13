@@ -1,1 +1,2 @@
 id,username,password,role,first_name,last_name,gender,date_of_birth,country,city,looking_for,music,require_photo_1,require_photo_2,additional_photo_1,additional_photo_2,occupation,smoking_status,hobbies,interests,profile_headline,favorite_quote,bio,about_me,ideal_match_description,hrmy
+1,guinat,$2y$10$yVmB4tRK.AWO4Fs7mrgtyOVWM29k2QmQ7v3CJPsp2sQfMvjDG.vOu,ROLE_USER,Nathan,Guihot,Male,2002-04-27,France,Paris,Female,Nakamura,../data/photos/guinat_023.99EXT56449-001.001.png,,"../data/photos/guinat_Black Camera Icon Photography Logo.png",,,,,,,,,,,0

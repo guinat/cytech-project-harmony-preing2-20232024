@@ -18,7 +18,11 @@ try {
         if (!$user) {
             throw new Exception('User not found.');
         }
-
+        if ($user) {
+            $_SESSION['username'] = $user->getUsername();
+        } else {
+            throw new Exception('User not found.');
+        }
         $user->setFirstName(sanitizeInput($_POST['first_name'] ?? ''));
         $user->setLastName(sanitizeInput($_POST['last_name'] ?? ''));
         $user->setGender(sanitizeInput($_POST['gender'] ?? ''));
@@ -37,17 +41,23 @@ try {
         $user->setIdealMatchDescription(sanitizeInput($_POST['ideal_match_description'] ?? ''));
         $user->setMusicPreferences(sanitizeInput($_POST['selected_music'] ?? ''));
 
-        $uploadedPhotos = [];
         $uploadDir = '../data/photos/';
         $photoFields = ['photo1', 'photo2', 'photo3', 'photo4'];
+        $uploadedPhotos = $user->getPhotos();
 
         foreach ($photoFields as $photoField) {
-            if (isset($_FILES[$photoField]) && $_FILES[$photoField]['error'] == UPLOAD_ERR_OK) {
-                $fileName = $_SESSION['username'] . "_" . $photoField . ".png";
+            if (isset($_FILES[$photoField]) && $_FILES[$photoField]['error'] === UPLOAD_ERR_OK) {
+                $oldPhoto = $uploadedPhotos[$photoField] ?? null;
+                $fileName = $_SESSION['username'] . "_" . basename($_FILES[$photoField]['name']);
                 $filePath = $uploadDir . $fileName;
 
                 if (move_uploaded_file($_FILES[$photoField]['tmp_name'], $filePath)) {
                     $uploadedPhotos[$photoField] = $filePath;
+                    $_SESSION['form_values'][$photoField] = $filePath;
+
+                    if ($oldPhoto && $oldPhoto != $filePath && file_exists($oldPhoto)) {
+                        unlink($oldPhoto);
+                    }
                 }
             }
         }
@@ -66,10 +76,10 @@ try {
             9 => $user->getCity(), // City
             10 => $user->getLookingFor(), // Looking For
             11 => $user->getMusicPreferences(), // Music Preferences
-            12 => $userPhotos['photo1'] ?? '', // Required Photo 1
-            13 => $userPhotos['photo2'] ?? '', // Required Photo 2
-            14 => $userPhotos['photo3'] ?? '', // Additional Photo 1
-            15 => $userPhotos['photo4'] ?? '', // Additional Photo 2
+            //12 => $userPhotos['photo1'] ?? '', // Required Photo 1
+            //13 => $userPhotos['photo2'] ?? '', // Required Photo 2
+            //14 => $userPhotos['photo3'] ?? '', // Additional Photo 1
+            //15 => $userPhotos['photo4'] ?? '', // Additional Photo 2
             16 => $user->getOccupation(), // Occupation
             17 => $user->getSmokingStatus(), // Smoking Status
             18 => $user->getHobbies(), // Hobbies

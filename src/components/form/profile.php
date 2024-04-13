@@ -175,7 +175,7 @@
         </div>
 
     </div>
-    <div class="w-1/2 bg-gray-100 p-4">
+    <!-- <div class="w-1/2 bg-gray-100 p-4">
         <div class="mb-4 text-lg font-semibold text-center">Upload Photos</div>
         <div class="grid grid-cols-2 gap-4">
             <input type="file" name="photo1" id="photo-upload1" class="bg-white p-6 shadow-md rounded flex items-center justify-center cursor-pointer">
@@ -186,7 +186,7 @@
         <div class="flex items-center justify-center mt-4">
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
         </div>
-    </div>
+    </div> -->
     <div id="musicGrid" class="container mx-auto px-4 my-8">
         <h2 class="text-3xl font-bold mb-4 text-center">Select Music</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -198,10 +198,25 @@
 </form>
 
 <script>
+    const musicList = [{
+            title: "The Life of Pablo",
+            imageUrl: "../../../assets/music/rap/the_life_of_pablo.png",
+            audioUrl: "../../../assets/music/rap/FML.mp3"
+        },
+        {
+            title: "Nakamura",
+            imageUrl: "../../../assets/music/pop/nakamura.png",
+            audioUrl: "../../../assets/music/pop/Sucette.mp3"
+        }
+    ];
+
+    const selectedMusicTitles = "<?php echo $_SESSION['form_values']['selected_music'] ?? ''; ?>".split(',').map(m => m.trim());
+
     class MusicCard {
-        constructor(containerId, musics) {
+        constructor(containerId, musics, selectedTitles) {
             this.container = document.getElementById(containerId);
             this.musics = musics;
+            this.selectedTitles = selectedTitles;
         }
 
         init() {
@@ -211,21 +226,22 @@
 
         renderMusicCards() {
             this.musics.forEach((music, index) => {
+                const isSelected = this.selectedTitles.includes(music.title);
                 const musicDiv = document.createElement('div');
-                musicDiv.className = 'music-card p-4 bg-white rounded-lg shadow-lg cursor-pointer flex flex-col items-center';
+                musicDiv.className = `music-card p-4 bg-white rounded-lg shadow-lg cursor-pointer flex flex-col items-center ${isSelected ? 'selected' : ''}`;
                 musicDiv.innerHTML = `
-            <div class="relative music-badge" data-music-title="${music.title}">
-                <img src="${music.imageUrl}" alt="${music.title}" class="rounded-lg w-48 h-48 object-cover">
-                <div class="overlay hidden absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center rounded-lg">
-                    <span class="text-white text-2xl">✓</span>
-                </div>
-            </div>
-            <div class="mt-4 flex gap-2">
-                <button type="button" onclick="playAudio('audio${index}', event)" class="text-blue-500">Play</button>
-                <button type="button" onclick="pauseAudio('audio${index}', event)" class="text-red-500">Pause</button>
-            </div>
-            <audio id="audio${index}" class="hidden" src="${music.audioUrl}"></audio>
-            `;
+                    <div class="relative music-badge" data-music-title="${music.title}">
+                        <img src="${music.imageUrl}" alt="${music.title}" class="rounded-lg w-48 h-48 object-cover">
+                        <div class="overlay ${isSelected ? '' : 'hidden'} absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center rounded-lg">
+                            <span class="text-white text-2xl">✓</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex gap-2">
+                        <button type="button" onclick="playAudio('audio${index}', event)" class="text-blue-500">Play</button>
+                        <button type="button" onclick="pauseAudio('audio${index}', event)" class="text-red-500">Pause</button>
+                    </div>
+                    <audio id="audio${index}" class="hidden" src="${music.audioUrl}"></audio>
+                `;
                 this.container.appendChild(musicDiv);
             });
         }
@@ -242,24 +258,17 @@
         }
     }
 
-    const musicList = [{
-            title: "The Life of Pablo",
-            imageUrl: "../../../assets/music/rap/the_life_of_pablo.png",
-            audioUrl: "../../../assets/music/rap/FML.mp3"
-        },
-        {
-            title: "Nakamura",
-            imageUrl: "../../../assets/music/pop/nakamura.png",
-            audioUrl: "../../../assets/music/pop/Sucette.mp3"
-        }
-    ];
-
-    const musicCard = new MusicCard('musicGrid', musicList);
+    const musicCard = new MusicCard('musicGrid', musicList, selectedMusicTitles);
     musicCard.init();
 
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSelectedMusic();
+    });
+
     function updateSelectedMusic() {
-        const selectedMusics = Array.from(document.querySelectorAll('.music-card .music-badge:not(.hidden)'))
-            .map(musicBadge => musicBadge.dataset.musicTitle);
+        const selectedMusics = Array.from(document.querySelectorAll('.music-card'))
+            .filter(card => !card.querySelector('.overlay').classList.contains('hidden'))
+            .map(card => card.querySelector('.music-badge').getAttribute('data-music-title'));
 
         document.getElementById('hiddenMusicInput').value = selectedMusics.join(', ');
     }
@@ -294,20 +303,38 @@
         }
     });
 
-    document.querySelectorAll('.hobby-badge, .interest-badge').forEach(item => {
-        item.addEventListener('click', function() {
-            this.classList.toggle('bg-blue-500');
-            this.classList.toggle('text-white');
-            this.classList.toggle('border-blue-700');
-            updateFormData();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectedHobbies = "<?php echo $_SESSION['form_values']['hobbies'] ?? ''; ?>".split(',').map(h => h.trim());
+        const selectedInterests = "<?php echo $_SESSION['form_values']['interests'] ?? ''; ?>".split(',').map(i => i.trim());
+
+        document.querySelectorAll('.hobby-badge').forEach(badge => {
+            if (selectedHobbies.includes(badge.getAttribute('data-hobby'))) {
+                badge.classList.add('bg-blue-500', 'text-white', 'border-blue-700');
+            }
+        });
+
+        document.querySelectorAll('.interest-badge').forEach(badge => {
+            if (selectedInterests.includes(badge.getAttribute('data-interest'))) {
+                badge.classList.add('bg-green-500', 'text-white', 'border-green-700');
+            }
+        });
+
+        function updateFormData() {
+            const selectedHobbies = Array.from(document.querySelectorAll('.hobby-badge.bg-blue-500')).map(badge => badge.getAttribute('data-hobby'));
+            const selectedInterests = Array.from(document.querySelectorAll('.interest-badge.bg-green-500')).map(badge => badge.getAttribute('data-interest'));
+
+            document.getElementById('hiddenHobbiesInput').value = selectedHobbies.join(', ');
+            document.getElementById('hiddenInterestsInput').value = selectedInterests.join(', ');
+        }
+
+        document.querySelectorAll('.hobby-badge, .interest-badge').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('bg-blue-500');
+                this.classList.toggle('text-white');
+                this.classList.toggle('border-blue-700');
+                updateFormData();
+            });
         });
     });
-
-    function updateFormData() {
-        const selectedHobbies = Array.from(document.querySelectorAll('.hobby-badge.bg-blue-500')).map(badge => badge.getAttribute('data-hobby'));
-        const selectedInterests = Array.from(document.querySelectorAll('.interest-badge.bg-blue-500')).map(badge => badge.getAttribute('data-interest'));
-
-        document.getElementById('hiddenHobbiesInput').value = selectedHobbies.join(', ');
-        document.getElementById('hiddenInterestsInput').value = selectedInterests.join(', ');
-    }
 </script>
