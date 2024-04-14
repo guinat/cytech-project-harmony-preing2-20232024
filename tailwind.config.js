@@ -8,7 +8,7 @@ module.exports = {
 				montserrat: ["Montserrat", "sans-serif"],
 			},
 			backgroundImage: {
-				hero: "url('assets/components/hero/bg-hero.png)",
+				hero: "url('/assets/components/hero/bg-hero.png)",
 			},
 			colors: {
 				primary: "",

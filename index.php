@@ -19,7 +19,7 @@
     <title>Harmony</title>
 </head>
 
-<body class="bg-[url('/assets/components/hero/bg-hero.png')] bg-cover bg-center bg-no-repeat bg-fixed font-montserrat bg-gray-600">
+<body class="bg-[url('/assets/components/hero/bg-hero.png')] bg-cover bg-center bg-no-repeat bg-fixed font-montserrat">
     <?php require_once 'src/components/header/header.php'; ?>
     <?php require_once 'src/components/hero/hero.php'; ?>
     <?php require_once 'src/components/footer/footer.php'; ?>
