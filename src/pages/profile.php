@@ -30,12 +30,14 @@ session_start();
         </div>
     </header>
 
-    <div class="container mx-auto px-4">
+    <section class="container mx-auto px-4">
         <div class="justify-center flex">
             <h2 class="text-2xl text-white font-semibold my-5">Complete Your Profile</h2>
         </div>
-        <?php require_once '../../src/components/form/profile.php'; ?>
-    </div>
+        <div class="items-center justify-center flex">
+            <?php require_once '../../src/components/form/profile.php'; ?>
+        </div>
+    </section>
 </body>
 
 </html>

@@ -11,82 +11,82 @@
 <?php endif; ?>
 
 <form action="../../../src/security/profile.php" method="POST" enctype="multipart/form-data" class="flex min-h-screen">
-    <div class="w-1/2 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div class="px-8 pt-6 pb-8 mb-4 items-center justify-center">
         <div class="flex items-center justify-center mb-4">
             <span class="flex-grow border-t border-gray-300"></span>
-            <span class="mx-2 text-sm text-gray-600"></span>
+            <span class="mx-2 text-sm text-white">Required</span>
             <span class="flex-grow border-t border-gray-300"></span>
         </div>
         <div class="flex flex-wrap -mx-3 mb-6">
             <div class="w-full px-3 mb-6 md:mb-0">
-                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="first_name">
-                    First Name
+                <label class="text-white text-sm font-bold mb-2" for="first_name">
+                    First Name <span class="font-bold text-red-600">*</span>
                 </label>
-                <input class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="first_name" name="first_name" type="text" placeholder="Jean" value="<?php echo htmlspecialchars($_SESSION['form_values']['first_name'] ?? '') ?>">
+                <input class="appearance-none block w-full bg-black text-white border border-[#4C5059] rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-[#99D4FF]" id="first_name" name="first_name" type="text" placeholder="Jean" value="<?php echo htmlspecialchars($_SESSION['form_values']['first_name'] ?? '') ?>">
             </div>
             <div class="w-full px-3">
-                <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="last_name">
-                    Last Name
+                <label class="text-white text-sm font-bold mb-2" for="last_name">
+                    Last Name <span class="font-bold text-red-600">*</span>
                 </label>
-                <input class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="last_name" name="last_name" type="text" placeholder="Dupont" value="<?php echo htmlspecialchars($_SESSION['form_values']['last_name'] ?? '') ?>">
+                <input class="appearance-none block w-full bg-black text-white border border-[#4C5059] rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:border-[#99D4FF]" id="last_name" name="last_name" type="text" placeholder="Dupont" value="<?php echo htmlspecialchars($_SESSION['form_values']['last_name'] ?? '') ?>">
             </div>
         </div>
         <div class="mb-4">
-            <span class="text-gray-700 text-sm font-bold mb-2">
-                Gender
+            <span class="text-white text-sm font-bold mb-2">
+                Gender <span class="font-bold text-red-600">*</span>
             </span>
             <div class="flex items-center">
                 <input type="radio" name="gender" value="Male" id="genderMale" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['gender'] == 'Male') ? 'checked' : ''; ?>>
-                <label for="genderMale" class="mr-4">Male</label>
+                <label for="genderMale" class="mr-4 text-white">Male</label>
 
                 <input type="radio" name="gender" value="Female" id="genderFemale" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['gender'] == 'Female') ? 'checked' : ''; ?>>
-                <label for="genderFemale" class="mr-4">Female</label>
+                <label for="genderFemale" class="mr-4 text-white">Female</label>
 
                 <input type="radio" name="gender" value="Other" id="genderOther" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['gender'] == 'Other') ? 'checked' : ''; ?>>
-                <label for="genderOther">Other</label>
+                <label for="genderOther" class="mr-4 text-white">Other</label>
             </div>
 
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="date_of_birth">
-                Date of Birth
+            <label class="block text-white text-sm font-bold mb-2" for="date_of_birth">
+                Date of Birth <span class="font-bold text-red-600">*</span>
             </label>
             <div class="flex">
-                <input class="shadow appearance-none border rounded py-2 px-1 sm:px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-16 w-auto bg-blue-100" type="number" placeholder="YYYY" name="birth_year" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_year'] ?? '') ?>">
-                <input class="shadow appearance-none border rounded py-2 px-1 sm:px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mx-2 w-8 w-auto bg-green-100" type="number" placeholder="MM" name="birth_month" max="12" min="1" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_month'] ?? '') ?>">
-                <input class="shadow appearance-none border rounded py-2 px-1 sm:px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-8 w-auto bg-yellow-100" type="number" placeholder="DD" name="birth_day" max="31" min="1" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_day'] ?? '') ?>">
+                <input class=" appearance-none  rounded-md py-2 px-1 sm:px-3 text-white leading-tight focus:outline-none focus:shadow-outline w-16 border border-[#4C5059] bg-black" type="number" placeholder="YYYY" name="birth_year" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_year'] ?? '') ?>">
+                <input class=" appearance-none  rounded-md py-2 px-1 sm:px-3 text-white leading-tight focus:outline-none focus:shadow-outline mx-2 w-8 border border-[#4C5059] bg-black" type="number" placeholder="MM" name="birth_month" max="12" min="1" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_month'] ?? '') ?>">
+                <input class=" appearance-none  rounded-md py-2 px-1 sm:px-3 text-white leading-tight focus:outline-none focus:shadow-outline w-8 border border-[#4C5059] bg-black" type="number" placeholder="DD" name="birth_day" max="31" min="1" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_day'] ?? '') ?>">
             </div>
         </div>
 
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="country">
-                Country of Residence
+            <label class="block text-white text-sm font-bold mb-2" for="country">
+                Country of Residence <span class="font-bold text-red-600">*</span>
             </label>
-            <select class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="country" name="country">
+            <select class="border-[#4C5059] border bg-black rounded-md w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" id="country" name="country">
                 <option value="">Select a country</option>
                 <option value="France" <?php if (isset($_SESSION['form_values']['country']) && $_SESSION['form_values']['country'] === "France") echo "selected"; ?>>France</option>
             </select>
 
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="city">
-                City
+            <label class="block text-white text-sm font-bold mb-2" for="city">
+                City <span class="font-bold text-red-600">*</span>
             </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="London" id="city" name="city" value="<?php echo htmlspecialchars($_SESSION['form_values']['city'] ?? '') ?>">
+            <input class="shadow appearance-none border-[#4C5059] border bg-black rounded-md  w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="London" id="city" name="city" value="<?php echo htmlspecialchars($_SESSION['form_values']['city'] ?? '') ?>">
         </div>
         <div class="mb-4">
-            <span class="text-gray-700 text-sm font-bold mb-2">
-                Looking for
+            <span class="text-white text-sm font-bold mb-2">
+                Looking for <span class="font-bold text-red-600">*</span>
             </span>
             <div class="flex items-center">
                 <input type="radio" name="looking_for" value="Male" id="lookingForMale" <?php echo (isset($_SESSION['form_values']['looking_for']) && $_SESSION['form_values']['looking_for'] == 'Male') ? 'checked' : ''; ?>>
-                <label for="lookingForMale" class="mr-4">Male</label>
+                <label for="lookingForMale" class="mr-4 text-white">Male</label>
 
                 <input type="radio" name="looking_for" value="Female" id="lookingForFemale" <?php echo (isset($_SESSION['form_values']['looking_for']) && $_SESSION['form_values']['looking_for'] == 'Female') ? 'checked' : ''; ?>>
-                <label for="lookingForFemale">Female</label>
+                <label for="lookingForFemale" class="mr-4 text-white">Female</label>
 
                 <input type="radio" name="looking_for" value="Both" id="lookingForBoth" <?php echo (isset($_SESSION['form_values']['looking_for']) && $_SESSION['form_values']['looking_for'] == 'Both') ? 'checked' : ''; ?>>
-                <label for="lookingForBoth">Both</label>
+                <label for="lookingForBoth" class="mr-4 text-white">Everyone</label>
             </div>
         </div>
         <div class="mb-4">
@@ -97,58 +97,59 @@
 
         <div class="flex items-center justify-center mb-4">
             <span class="flex-grow border-t border-gray-300"></span>
-            <span class="mx-2 text-sm text-gray-600">Optional</span>
+            <span class="mx-2 text-sm text-white">Optional</span>
             <span class="flex-grow border-t border-gray-300"></span>
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="occupation">
+            <label class="block text-white text-sm font-bold mb-2" for="occupation">
                 Occupation
             </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Engineer" id="occupation" name="occupation" value="<?php echo htmlspecialchars($_SESSION['form_values']['occupation'] ?? '') ?>">
+            <input class="appearance-none border border-[#4C5059] bg-black rounded-md w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="Engineer" id="occupation" name="occupation" value="<?php echo htmlspecialchars($_SESSION['form_values']['occupation'] ?? '') ?>">
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">
+            <label class="block text-white text-sm font-bold mb-2">
                 Smoking Status
             </label>
             <div class="flex items-center mb-2">
                 <input id="smokingYes" type="radio" name="smoking" class="mr-2" value="Yes" <?php echo (isset($_SESSION['form_values']['smoking']) && $_SESSION['form_values']['smoking'] == 'Yes') ? 'checked' : ''; ?>>
-                <label for="smokingYes" class="mr-4">Yes</label>
+                <label for="smokingYes" class="mr-4 text-white">Yes</label>
 
                 <input id="smokingNo" type="radio" name="smoking" class="mr-2" value="No" <?php echo (isset($_SESSION['form_values']['smoking']) && $_SESSION['form_values']['smoking'] == 'No') ? 'checked' : ''; ?>>
-                <label for="smokingNo">No</label>
+                <label for="smokingNo" class="mr-4 text-white">No</label>
             </div>
         </div>
         <input type="hidden" id="hiddenHobbiesInput" name="hobbies" value="<?php echo htmlspecialchars($_SESSION['form_values']['hobbies'] ?? '') ?>">
         <input type="hidden" id="hiddenInterestsInput" name="interests" value="<?php echo htmlspecialchars($_SESSION['form_values']['interests'] ?? '') ?>">
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">
+            <label class="block text-white text-sm font-bold mb-2">
                 Hobbies
             </label>
-            <div class="flex flex-wrap gap-2">
-                <div class="hobby-badge border border-blue-500 hover:bg-blue-500 hover:text-white text-blue-500 py-1 px-3 rounded cursor-pointer" data-hobby="Reading">Reading</div>
-                <div class="hobby-badge border border-blue-500 hover:bg-blue-500 hover:text-white text-blue-500 py-1 px-3 rounded cursor-pointer" data-hobby="Traveling">Traveling</div>
+            <div class="flex flex-wrap gap-1">
+                <div class="cursor-pointer bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300" data-hobby="Reading">Reading</div>
+                <div class="cursor-pointer bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300" data-hobby="Traveling">Traveling</div>
             </div>
         </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2">
+
+        <!-- <div class="mb-4">
+            <label class="block text-white text-sm font-bold mb-2">
                 Interests
             </label>
             <div class="flex flex-wrap gap-2">
                 <div class="interest-badge border border-green-500 hover:bg-green-500 hover:text-white text-green-500 py-1 px-3 rounded cursor-pointer" data-interest="Technology">Technology</div>
                 <div class="interest-badge border border-green-500 hover:bg-green-500 hover:text-white text-green-500 py-1 px-3 rounded cursor-pointer" data-interest="Music">Music</div>
             </div>
-        </div>
+        </div> -->
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="profile_headline">
+            <label class="block text-white text-sm font-bold mb-2" for="profile_headline">
                 Profile Headline
             </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="" id="profile_headline" name="profile_headline" value="<?php echo htmlspecialchars($_SESSION['form_values']['profile_headline'] ?? '') ?>">
+            <input class=" appearance-none border border-[#4C5059] bg-black  rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="" id="profile_headline" name="profile_headline" value="<?php echo htmlspecialchars($_SESSION['form_values']['profile_headline'] ?? '') ?>">
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="favorite_quote">
+            <label class="block text-white text-sm font-bold mb-2" for="favorite_quote">
                 Favorite Quote
             </label>
-            <input list="quotes" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Choose or type your favorite quote" id="favorite_quote" name="favorite_quote" value="<?php echo htmlspecialchars($_SESSION['form_values']['favorite_quote'] ?? '') ?>">
+            <input list="quotes" class=" appearance-none border border-[#4C5059] bg-black  rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" placeholder="Choose or type your favorite quote" id="favorite_quote" name="favorite_quote" value="<?php echo htmlspecialchars($_SESSION['form_values']['favorite_quote'] ?? '') ?>">
             <datalist id="quotes">
                 <option value="Quote1">
                 <option value="Quote2">
@@ -156,24 +157,23 @@
             </datalist>
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="bio">
+            <label class="block text-white text-sm font-bold mb-2" for="bio">
                 Bio
             </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="" id="bio" name="bio" value="<?php echo htmlspecialchars($_SESSION['form_values']['bio'] ?? '') ?>">
+            <input class=" appearance-none border border-[#4C5059] bg-black  rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" type="text" placeholder="" id="bio" name="bio" value="<?php echo htmlspecialchars($_SESSION['form_values']['bio'] ?? '') ?>">
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="about_me">
+            <label class="block text-white text-sm font-bold mb-2" for="about_me">
                 About me
             </label>
-            <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Tell us something about you" rows="4" id="about_me" name="about_me"><?php echo htmlspecialchars($_SESSION['form_values']['about_me'] ?? '') ?></textarea>
+            <textarea class=" appearance-none border border-[#4C5059] bg-black  rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" placeholder="Tell us something about you" rows="4" id="about_me" name="about_me"><?php echo htmlspecialchars($_SESSION['form_values']['about_me'] ?? '') ?></textarea>
         </div>
         <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="ideal_match_description">
+            <label class="block text-white text-sm font-bold mb-2" for="ideal_match_description">
                 Ideal Match Description
             </label>
-            <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Describe your ideal match" rows="4" id="ideal_match_description" name="ideal_match_description"><?php echo htmlspecialchars($_SESSION['form_values']['ideal_match_description'] ?? '') ?></textarea>
+            <textarea class=" appearance-none border border-[#4C5059] bg-black  rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" placeholder="Describe your ideal match" rows="4" id="ideal_match_description" name="ideal_match_description"><?php echo htmlspecialchars($_SESSION['form_values']['ideal_match_description'] ?? '') ?></textarea>
         </div>
-
     </div>
     <!-- <div class="w-1/2 bg-gray-100 p-4">
         <div class="mb-4 text-lg font-semibold text-center">Upload Photos</div>
@@ -187,13 +187,13 @@
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
         </div>
     </div> -->
-    <div id="musicGrid" class="container mx-auto px-4 my-8">
+    <!-- <div id="musicGrid" class="container mx-auto px-4 my-8">
         <h2 class="text-3xl font-bold mb-4 text-center">Select Music</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         </div>
         <input type="hidden" id="hiddenMusicInput" name="selected_music" value="<?php echo htmlspecialchars($_SESSION['form_values']['selected_music'] ?? '') ?>">
 
-    </div>
+    </div> -->
 
 </form>
 
