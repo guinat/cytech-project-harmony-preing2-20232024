@@ -11,7 +11,7 @@
 <?php endif; ?>
 
 <form action="../../../src/security/profile.php" method="POST" enctype="multipart/form-data" class="flex min-h-screen">
-    <div class="px-8 pt-6 pb-8 mb-4 items-center justify-center">
+    <div class="px-8 pt-6 pb-8 mb-4 items-center justify-center" id="personalDetails">
         <div class="flex items-center justify-center mb-4">
             <span class="flex-grow border-t border-gray-300"></span>
             <span class="mx-2 text-sm text-white">Required</span>
@@ -129,16 +129,6 @@
                 <div class="cursor-pointer bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300" data-hobby="Traveling">Traveling</div>
             </div>
         </div>
-
-        <!-- <div class="mb-4">
-            <label class="block text-white text-sm font-bold mb-2">
-                Interests
-            </label>
-            <div class="flex flex-wrap gap-2">
-                <div class="interest-badge border border-green-500 hover:bg-green-500 hover:text-white text-green-500 py-1 px-3 rounded cursor-pointer" data-interest="Technology">Technology</div>
-                <div class="interest-badge border border-green-500 hover:bg-green-500 hover:text-white text-green-500 py-1 px-3 rounded cursor-pointer" data-interest="Music">Music</div>
-            </div>
-        </div> -->
         <div class="mb-4">
             <label class="block text-white text-sm font-bold mb-2" for="profile_headline">
                 Profile Headline
@@ -174,30 +164,123 @@
             </label>
             <textarea class=" appearance-none border border-[#4C5059] bg-black  rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline" placeholder="Describe your ideal match" rows="4" id="ideal_match_description" name="ideal_match_description"><?php echo htmlspecialchars($_SESSION['form_values']['ideal_match_description'] ?? '') ?></textarea>
         </div>
+        <div class="flex justify-center">
+            <button type="button" class="p-4 rounded-full border-white border-2 mb-4" onclick="toggleForms()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+            </button>
+        </div>
     </div>
-    <!-- <div class="w-1/2 bg-gray-100 p-4">
-        <div class="mb-4 text-lg font-semibold text-center">Upload Photos</div>
-        <div class="grid grid-cols-2 gap-4">
-            <input type="file" name="photo1" id="photo-upload1" class="bg-white p-6 shadow-md rounded flex items-center justify-center cursor-pointer">
-            <input type="file" name="photo2" id="photo-upload2" class="bg-white p-6 shadow-md rounded flex items-center justify-center cursor-pointer">
-            <input type="file" name="photo3" id="photo-upload3" class="bg-white p-6 shadow-md rounded flex items-center justify-center cursor-pointer">
-            <input type="file" name="photo4" id="photo-upload4" class="bg-white p-6 shadow-md rounded flex items-center justify-center cursor-pointer">
-        </div>
-        <div class="flex items-center justify-center mt-4">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
-        </div>
-    </div> -->
-    <!-- <div id="musicGrid" class="container mx-auto px-4 my-8">
-        <h2 class="text-3xl font-bold mb-4 text-center">Select Music</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        </div>
-        <input type="hidden" id="hiddenMusicInput" name="selected_music" value="<?php echo htmlspecialchars($_SESSION['form_values']['selected_music'] ?? '') ?>">
+    <div id="photoUploadForm" class="w-full px-8 pt-6 pb-8 mb-4 hidden">
+        <div class="grid grid-cols-3 gap-4">
+            <div class="photo-card relative w-[120px] h-[200px] border-2 border-dashed border-gray-300 bg-[#1C1D1D] rounded-lg cursor-pointer overflow-visible" onclick="document.getElementById('photo-upload1').click()">
+                <input type="file" id="photo-upload1" class="hidden" accept="image/*" onchange="loadImage(event, 'photo1')">
+                <div id="photo1" class="photo-placeholder absolute inset-0 flex items-center justify-center">
+                    <div class="add-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-br from-sky-300 to-fuchsia-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
 
-    </div> -->
+            <div class="photo-card relative w-[120px] h-[200px] border-2 border-dashed border-gray-300 bg-[#1C1D1D] rounded-lg cursor-pointer overflow-visible" onclick="document.getElementById('photo-upload1').click()">
+                <input type="file" id="photo-upload2" class="hidden" accept="image/*" onchange="loadImage(event, 'photo2')">
+                <div id="photo1" class="photo-placeholder absolute inset-0 flex items-center justify-center">
+                    <div class="add-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-br from-sky-300 to-fuchsia-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="photo-card relative w-[120px] h-[200px] border-2 border-dashed border-gray-300 bg-[#1C1D1D] rounded-lg cursor-pointer overflow-visible" onclick="document.getElementById('photo-upload1').click()">
+                <input type="file" id="photo-upload3" class="hidden" accept="image/*" onchange="loadImage(event, 'photo3')">
+                <div id="photo1" class="photo-placeholder absolute inset-0 flex items-center justify-center">
+                    <div class="add-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-br from-sky-300 to-fuchsia-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- <div id="musicGrid" class="container mx-auto px-4 my-8">
+            <h2 class="text-3xl font-bold mb-4 text-center">Select Music</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            </div>
+            <input type="hidden" id="hiddenMusicInput" name="selected_music" value="<?php echo htmlspecialchars($_SESSION['form_values']['selected_music'] ?? '') ?>">
+        </div> -->
+        <div class="flex justify-between mt-4">
+            <button type="button" class="p-4 rounded-full border-white border-2 mb-4" onclick="toggleForms()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+            </button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold p-4 rounded">Submit</button>
+        </div>
+
+    </div>
+
 
 </form>
 
 <script>
+    document.getElementById('photoCard1').addEventListener('click', function() {
+        document.getElementById('photo-upload1').click();
+    });
+
+    function loadImage(event, photoId) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById(photoId);
+            output.style.backgroundImage = 'url(' + reader.result + ')';
+            output.style.backgroundSize = 'cover';
+            output.style.backgroundPosition = 'center';
+            output.style.backgroundRepeat = 'no-repeat';
+            output.innerHTML = `<div class="delete-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-br from-red-500 to-red-800" onclick="event.stopPropagation(); deleteImage('${photoId}');">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+</svg>
+
+                            </div>`;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+
+    function deleteImage(photoId) {
+        var output = document.getElementById(photoId);
+        output.style.backgroundImage = '';
+        output.innerHTML = `<div class="add-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-br from-sky-300 to-fuchsia-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </div>`;
+    }
+
+
+
+
+
+    function toggleForms() {
+        var personalDetails = document.getElementById('personalDetails');
+        var photoUploadForm = document.getElementById('photoUploadForm');
+
+        if (personalDetails.style.display === 'none') {
+            personalDetails.style.display = 'block';
+            photoUploadForm.style.display = 'none';
+        } else {
+            personalDetails.style.display = 'none';
+            photoUploadForm.style.display = 'block';
+        }
+        window.scrollTo(0, 0);
+    }
+
     const musicList = [{
             title: "The Life of Pablo",
             imageUrl: "../../../assets/music/rap/the_life_of_pablo.png",
