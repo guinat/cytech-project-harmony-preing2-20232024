@@ -16,12 +16,12 @@ session_start();
     <title>Complete Your Profile</title>
 </head>
 
-<body class="bg-[#111418]">
+<body class="font-montserrat text-white bg-dark_gray">
     <header>
         <div class="flex justify-between items-center px-4 py-3 md:px-6 md:py-4 lg:px-8 lg:py-5">
             <div class="flex items-center">
                 <a href="/index.php">
-                    <img src="/assets/logo.svg" alt="Logo" class="w-8">
+                    <img src="/assets/logo_colored.svg" alt="Logo" class="w-8">
                 </a>
             </div>
             <div class="flex flex-row gap-6 items-center">

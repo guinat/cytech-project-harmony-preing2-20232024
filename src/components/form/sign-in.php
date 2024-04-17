@@ -17,17 +17,17 @@
 <form action="../../../src/security/sign-in.php" method="POST">
     <div class="mb-4">
         <label for="username" class="block text-sm font-bold mb-2">Username</label>
-        <input type="text" id="username" name="username" class=" bg-[#111418] border border-gray-400 rounded-full w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline">
+        <input type="text" id="username" name="username" class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white">
     </div>
     <div class="mb-6">
         <label for="password" class="block text-sm font-bold mb-2">Password</label>
-        <input type="password" id="password" name="password" class=" bg-[#111418] border border-gray-400 rounded-full w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline">
+        <input type="password" id="password" name="password" class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white">
     </div>
     <div class="flex flex-col items-center justify-center mb-4">
-        <button class="bg-white rounded-full w-full hover:bg-gray-100 text-[#111418] font-bold py-2 px-4 focus:outline-none focus:shadow-outline" type="submit">
+        <button class="bg-white rounded-full w-full hover:bg-gray-300 text-black font-bold py-2 px-4 focus:outline-none" type="submit">
             Submit
         </button>
     </div>
-    <span class="text-sm items-left text-gray-400">Don't have an account yet ? <a class="text-sky-300" href="/src/pages/sign-up.php">Sign Up</a></span>
+    <span class="text-sm items-left text-gray-400">Don't have an account yet ? <a class="text-sky_primary font-semibold" href="/src/pages/sign-up.php">Sign Up</a></span>
 
 </form>

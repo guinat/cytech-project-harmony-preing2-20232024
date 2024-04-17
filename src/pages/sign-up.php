@@ -13,7 +13,7 @@
     <title>Sign Up</title>
 </head>
 
-<body class="font-montserrat">
+<body class="font-montserrat text-white ">
     <div class="absolute inset-0 bg-[url('/assets/components/hero/bg-hero.png')] bg-cover bg-center bg-no-repeat bg-fixed blur-sm"></div>
 
     <div class="relative z-20">
@@ -22,9 +22,9 @@
 
     <section class="container mx-auto mt-4 relative z-10">
         <div id="SignUpModal" class="flex justify-center mb-24 mt-24 items-center">
-            <div class="bg-[#111418] text-white p-5 rounded-3xl">
+            <div class="bg-dark_gray p-5 rounded-3xl">
                 <div class="flex items-center justify-center flex-col">
-                    <img src="/assets/logo.svg" alt="Logo" class="w-8">
+                    <img src="/assets/logo_colored.svg" alt="Logo" class="w-8">
                     <h2 class="text-lg font-bold mb-4">Sign Up</h2>
                 </div>
                 <?php require_once '../../src/components/form/sign-up.php'; ?>
