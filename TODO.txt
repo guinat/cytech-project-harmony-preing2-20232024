@@ -11,10 +11,11 @@ Complete profile:
         - CompleteProfile
         - UpdateProfile
 
-    - Add some more fields to UserEntity ?
+Add some more fields to UserEntity ?
         - created_at
         - updated_at
         ...
+Modularize JavaScript code
 
 Code refactoring:
     - UserEntity
