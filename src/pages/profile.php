@@ -13,6 +13,7 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/tailwind.config.js"></script>
+    <link rel="icon" href="/src/favicon.ico" type="image/x-icon">
     <title>Complete Your Profile</title>
 </head>
 
