@@ -13,3 +13,5 @@ Code refactoring:
     - UserEntity
     - SignIn
     - SignUp
+    - profileCompletion
+    - profileUpdate
