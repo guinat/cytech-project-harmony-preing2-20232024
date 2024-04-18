@@ -22,6 +22,7 @@ session_start();
         Welcome <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : ''; ?> to Harmony
     </h1>
     <a href="update-profile.php">UpdateProfile</a>
+    <p>Hello world</p>
 
     <?php require_once '../../src/components/footer/footer.php'; ?>
 
