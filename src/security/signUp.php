@@ -1,5 +1,5 @@
 <?php
-require_once '../entity/users.php';
+require_once '../entity/user.php';
 
 session_start();
 
@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($password !== $confirmPassword) {
         $_SESSION['error_message'] = "Passwords do not match.";
-        header('Location: ../pages/sign-up.php');
+        header('Location: /src/pages/signUp.php');
         exit;
     }
 
@@ -21,16 +21,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['user_id'] = $user->getId();
             $_SESSION['username'] = $user->getUsername();
 
-            header('Location: ../pages/profile.php');
+            header('Location: /src/pages/profileCompletion.php');
             exit;
         } else {
             $_SESSION['error_message'] = "Error during registration.";
-            header('Location: ../pages/sign-up.php');
+            header('Location: /src/pages/signUp.php');
             exit;
         }
     } catch (Exception $e) {
         $_SESSION['error_message'] = $e->getMessage();
-        header('Location: ../pages/sign-up.php');
+        header('Location: /src/pages/signUp.php');
         exit;
     }
 }

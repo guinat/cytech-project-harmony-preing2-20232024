@@ -16,15 +16,15 @@ echo '
 </head>
 
 <body class="bg-gray-100">
-    <?php require_once '../../src/components/header/header.php'; ?>
+    <?php require_once '/src/components/header/header.php'; ?>
 
 
     <div class="container mx-auto px-4">
         <h2 class="text-2xl font-semibold text-gray-800 my-5">Update Your Profile</h2>
-        <?php require_once '../../src/components/form/update-profile.php'; ?>
+        <?php require_once '/src/components/form/update-profile.php'; ?>
     </div>
 
-    <?php require_once '../../src/components/footer/footer.php'; ?>
+    <?php require_once '/src/components/footer/footer.php'; ?>
 
 </body>
 

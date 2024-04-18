@@ -1,24 +1,15 @@
 Complete profile:
     - Frontend for:
-        - Gender
-        - Looking for
-        - Smoking status
-        - Hobbies
-        - Photo section
+        - Errors messages
         - Music section
 
     - Backend for:
         - CompleteProfile
         - UpdateProfile
 
-Add some more fields to UserEntity ?
-        - created_at
-        - updated_at
-        ...
 Modularize JavaScript code
 
 Code refactoring:
     - UserEntity
     - SignIn
     - SignUp
-    - BGImage for SignIn & SignUp

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../entity/users.php';
+require_once '../entity/user.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
@@ -22,11 +22,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($userFound) {
-        header('Location: ../pages/welcome.php');
+        header('Location: /src/pages/app.php');
         exit;
     } else {
         $_SESSION['error_message'] = 'Incorrect credentials.';
-        header('Location: ../pages/sign-in.php');
+        header('Location: /src/pages/signIn.php');
         exit;
     }
 }

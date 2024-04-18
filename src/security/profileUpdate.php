@@ -1,5 +1,5 @@
 <?php
-require_once '../entity/users.php';
+require_once '../entity/user.php';
 require_once '../utils/utils.php';
 
 session_start();
@@ -14,12 +14,12 @@ try {
             exit;
         }
 
-        $user = getUserById($userId, '../data/users.csv');
+        $user = getUserById($userId, '/src/data/users.csv');
         if (!$user) {
             throw new Exception('User not found.');
         }
         if ($user) {
-            $_SESSION['username'] = $user->getUsername();  // Ensure this is set correctly
+            $_SESSION['username'] = $user->getUsername();
         } else {
             throw new Exception('User not found.');
         }
@@ -35,12 +35,7 @@ try {
         $user->setOccupation(sanitizeInput($_POST['occupation'] ?? ''));
         $user->setSmokingStatus(sanitizeInput($_POST['smoking'] ?? ''));
         $user->setHobbies(sanitizeInput($_POST['hobbies'] ?? ''));
-        $user->setInterests(sanitizeInput($_POST['interests'] ?? ''));
-        $user->setProfileHeadline(sanitizeInput($_POST['profile_headline'] ?? ''));
-        $user->setFavoriteQuote(sanitizeInput($_POST['favorite_quote'] ?? ''));
-        $user->setBio(sanitizeInput($_POST['bio'] ?? ''));
         $user->setAboutMe(sanitizeInput($_POST['about_me'] ?? ''));
-        $user->setIdealMatchDescription(sanitizeInput($_POST['ideal_match_description'] ?? ''));
         $user->setMusicPreferences(sanitizeInput($_POST['selected_music'] ?? ''));
 
         // $uploadDir = '../data/photos/';
@@ -85,24 +80,19 @@ try {
             16 => $user->getOccupation(), // Occupation
             17 => $user->getSmokingStatus(), // Smoking Status
             18 => $user->getHobbies(), // Hobbies
-            19 => $user->getInterests(), // Interests
-            20 => $user->getProfileHeadline(), // Profile Headline
-            21 => $user->getFavoriteQuote(), // Favorite Quote
-            22 => $user->getBio(), // Bio
             23 => $user->getAboutMe(), // About Me
-            24 => $user->getIdealMatchDescription(), // Ideal Match Description
             25 => '0' // Harmony Score
         ];
 
 
-        if (!updateUserProfile($userId, $dataToUpdate, '../data/users.csv')) {
+        if (!updateUserProfile($userId, $dataToUpdate, '/src/data/users.csv')) {
             throw new Exception('Error updating data in CSV file.');
         }
-        header('Location: ../pages/welcome.php');
+        header('Location: /src/pages/app.php');
         exit();
     }
 } catch (Exception $e) {
     $_SESSION['error_message'] = $e->getMessage();
-    header('Location: ../pages/update-profile.php');
+    header('Location: /src/pages/profileUpdate.php');
     exit;
 }

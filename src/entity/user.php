@@ -3,6 +3,8 @@
 class UserEntity
 {
     private $id;
+    private $created_at;
+    private $updated_at;
     private $username;
     private $password;
     private $firstName;
@@ -17,20 +19,16 @@ class UserEntity
     private $occupation;
     private $smokingStatus;
     private $hobbies;
-    private $interests;
-    private $profileHeadline;
-    private $favoriteQuote;
-    private $bio;
     private $aboutMe;
-    private $idealMatchDescription;
     private $harmony;
 
     public function __construct($id, $username, $password)
     {
         $this->id = $id;
+        $this->created_at = date('Y-m-d H:i:s');
+        $this->updated_at = null;
         $this->setUsername($username);
         $this->setPassword($password);
-
         $this->firstName = '';
         $this->lastName = '';
         $this->gender = '';
@@ -43,12 +41,7 @@ class UserEntity
         $this->occupation = '';
         $this->smokingStatus = '';
         $this->hobbies = '';
-        $this->interests = '';
-        $this->profileHeadline = '';
-        $this->favoriteQuote = '';
-        $this->bio = '';
         $this->aboutMe = '';
-        $this->idealMatchDescription = '';
         $this->harmony = '';
     }
 
@@ -56,6 +49,16 @@ class UserEntity
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    public function getUpdatedAt()
+    {
+        return $this->updated_at;
     }
 
     public function getUsername()
@@ -128,37 +131,17 @@ class UserEntity
         return $this->hobbies;
     }
 
-    public function getInterests()
-    {
-        return $this->interests;
-    }
-
-    public function getProfileHeadline()
-    {
-        return $this->profileHeadline;
-    }
-
-    public function getFavoriteQuote()
-    {
-        return $this->favoriteQuote;
-    }
-
-    public function getBio()
-    {
-        return $this->bio;
-    }
-
     public function getAboutMe()
     {
         return $this->aboutMe;
     }
 
-    public function getIdealMatchDescription()
+    // Setters
+    public function setUpdatedAt($date)
     {
-        return $this->idealMatchDescription;
+        $this->updated_at = $date;
     }
 
-    // Setters
     public function setUsername($username)
     {
         if (empty($username)) {
@@ -268,52 +251,12 @@ class UserEntity
         $this->hobbies = $hobbies;
     }
 
-    public function setInterests($interests)
-    {
-        if (!is_string($interests)) {
-            throw new Exception("Interests should be a string.");
-        }
-        $this->interests = $interests;
-    }
-
-    public function setProfileHeadline($profileHeadline)
-    {
-        if (!is_string($profileHeadline)) {
-            throw new Exception("Profile headline must be a string.");
-        }
-        $this->profileHeadline = $profileHeadline;
-    }
-
-    public function setFavoriteQuote($favoriteQuote)
-    {
-        if (!is_string($favoriteQuote)) {
-            throw new Exception("Favorite must be a string.");
-        }
-        $this->favoriteQuote = $favoriteQuote;
-    }
-
-    public function setBio($bio)
-    {
-        if (!is_string($bio)) {
-            throw new Exception("Bio must be a string.");
-        }
-        $this->bio = $bio;
-    }
-
     public function setAboutMe($aboutMe)
     {
         if (!is_string($aboutMe)) {
             throw new Exception("About me must be a string.");
         }
         $this->aboutMe = $aboutMe;
-    }
-
-    public function setIdealMatchDescription($idealMatchDescription)
-    {
-        if (!is_string($idealMatchDescription)) {
-            throw new Exception("Ideal match description must be a string.");
-        }
-        $this->idealMatchDescription = $idealMatchDescription;
     }
 
     // Validators
@@ -412,14 +355,20 @@ function createUser($username, $password)
         $password,
     );
 
+    $user->setUpdatedAt(date('Y-m-d H:i:s'));
+
     if (($handle = fopen($csvFile, 'a')) !== FALSE) {
         $csvRow = [
             $user->getId(),
+            $user->getCreatedAt(),
+            $user->getUpdatedAt(),
             $user->getUsername(),
             $user->getPassword(),
         ];
+
         fputcsv($handle, $csvRow);
         fclose($handle);
+
         return $user;
     }
 
@@ -458,12 +407,13 @@ function updateUserProfile($userId, $dataToUpdate, $csvFile)
 function getUserById($userId, $csvFile)
 {
     if (($handle = fopen($csvFile, 'r')) !== FALSE) {
+        $header = fgetcsv($handle);
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
             if ($data[0] == $userId) {
                 $user = new UserEntity(
                     $data[0],
-                    $data[1],
-                    $data[2],
+                    $data[3],
+                    $data[4]
                 );
                 fclose($handle);
                 return $user;
