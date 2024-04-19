@@ -37,7 +37,7 @@ try {
         $user->setSmokingStatus(sanitizeInput($_POST['smoking'] ?? ''));
         $user->setHobbies(sanitizeInput($_POST['hobbies'] ?? ''));
         $user->setAboutMe(sanitizeInput($_POST['about_me'] ?? ''));
-        // $user->setMusicPreferences(sanitizeInput($_POST['selected_music'] ?? ''));
+        $user->setMusicPreferences(sanitizeInput($_POST['selected_music'] ?? ''));
 
         $uploadedPhotos = [];
         $uploadDir = '../data/photos/';
@@ -68,7 +68,7 @@ try {
             10 => $user->getCountry(), // Country
             11 => $user->getCity(), // City
             12 => $user->getLookingFor(), // Looking For
-            // 13 => $user->getMusicPreferences(), // Music Preferences
+            13 => $user->getMusicPreferences(), // Music Preferences
             14 => $userPhotos['photo1'] ?? '', // Required Photo 1
             15 => $userPhotos['photo2'] ?? '', // Required Photo 2
             16 => $userPhotos['photo3'] ?? '', // Additional Photo 1

@@ -249,25 +249,132 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
             </button>
-            <button type="button" class="p-4 rounded-full border-white border-2 mb-4" onclick="toggleForms()">
+            <button type="button" class="p-4 rounded-full border-white border-2 mb-4" onclick="toggleForms2()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
             </button>
         </div>
+
+    </section>
+    <!-------------------------- MUSIC SECTION --------------------------->
+    <section id="MusicForm" class="hidden">
+        <div id="musicGrid" class="container mx-auto px-4 my-8">
+            <h2 class="text-3xl font-bold mb-4 text-center">Select Music</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            </div>
+            <input type="hidden" id="hiddenMusicInput" name="selected_music" value="<?php echo htmlspecialchars($_SESSION['form_values']['selected_music'] ?? '') ?>">
+
+        </div>
         <div class="flex flex-col items-center justify-center mb-4">
+            <button type="button" class="p-4 rounded-full border-white border-2 mb-4" onclick="toggleForms2()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+            </button>
             <button class="bg-white rounded-full w-full hover:bg-gray-300 text-black font-bold py-2 px-4 focus:outline-none" type="submit">
                 Submit
             </button>
         </div>
     </section>
-    <!-------------------------- MUSIC SECTION --------------------------->
-    <section>
-        <!-- TODO: -->
-    </section>
+
 </form>
 
 <script>
+    const musicList = [{
+            title: "The Life of Pablo",
+            imageUrl: "../../../assets/music/rap/the_life_of_pablo.png",
+            audioUrl: "../../../assets/music/rap/FML.mp3"
+        },
+        {
+            title: "Nakamura",
+            imageUrl: "../../../assets/music/pop/nakamura.png",
+            audioUrl: "../../../assets/music/pop/Sucette.mp3"
+        }
+    ];
+
+    const selectedMusicTitles = "<?php echo $_SESSION['form_values']['selected_music'] ?? ''; ?>".split(',').map(m => m.trim());
+
+
+    class MusicCard {
+        constructor(containerId, musics, selectedTitles) {
+            this.container = document.getElementById(containerId);
+            this.musics = musics;
+            this.selectedTitles = selectedTitles;
+        }
+
+        init() {
+            this.renderMusicCards();
+            this.addEventListeners();
+        }
+
+        renderMusicCards() {
+            this.musics.forEach((music, index) => {
+                const isSelected = this.selectedTitles.includes(music.title);
+                const musicDiv = document.createElement('div');
+                musicDiv.className = `music-card p-4 bg-white rounded-lg shadow-lg cursor-pointer flex flex-col items-center ${isSelected ? 'selected' : ''}`;
+                musicDiv.innerHTML = `
+                    <div class="relative music-badge" data-music-title="${music.title}">
+                        <img src="${music.imageUrl}" alt="${music.title}" class="rounded-lg w-48 h-48 object-cover">
+                        <div class="overlay ${isSelected ? '' : 'hidden'} absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center rounded-lg">
+                            <span class="text-white text-2xl">✓</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex gap-2">
+                        <button type="button" onclick="playAudio('audio${index}', event)" class="text-blue-500">Play</button>
+                        <button type="button" onclick="pauseAudio('audio${index}', event)" class="text-red-500">Pause</button>
+                    </div>
+                    <audio id="audio${index}" class="hidden" src="${music.audioUrl}"></audio>
+                `;
+                this.container.appendChild(musicDiv);
+            });
+        }
+
+        addEventListeners() {
+            document.querySelectorAll('.music-card .music-badge').forEach(card => {
+                card.addEventListener('click', function(event) {
+                    if (event.target.tagName !== 'BUTTON') {
+                        this.querySelector('.overlay').classList.toggle('hidden');
+                        updateSelectedMusic();
+                    }
+                });
+            });
+        }
+    }
+
+    const musicCard = new MusicCard('musicGrid', musicList, selectedMusicTitles);
+    musicCard.init();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSelectedMusic();
+    });
+
+    function updateSelectedMusic() {
+        const selectedMusics = Array.from(document.querySelectorAll('.music-card'))
+            .filter(card => !card.querySelector('.overlay').classList.contains('hidden'))
+            .map(card => card.querySelector('.music-badge').getAttribute('data-music-title'));
+
+        document.getElementById('hiddenMusicInput').value = selectedMusics.join(', ');
+    }
+
+    function playAudio(audioId, event) {
+        event.stopPropagation();
+        const audio = document.getElementById(audioId);
+        audio.play();
+    }
+
+    function pauseAudio(audioId, event) {
+        event.stopPropagation();
+        const audio = document.getElementById(audioId);
+        audio.pause();
+    }
+
+    function toggleForms2() {
+        const musicForm = document.getElementById('MusicForm');
+        musicForm.classList.toggle('hidden');
+    }
+
+
     document.getElementsByName("birth_year")[0].addEventListener('input', function() {
         if (this.value.length > 4) {
             this.value = this.value.slice(0, 4);
@@ -285,18 +392,17 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        const selectedHobbies = "<?php echo $_SESSION['form_values']['hobbies'] ?? ''; ?>".split(',').filter(h => h.trim().length > 0);
+        const selectedHobbies = "<?php echo htmlspecialchars($_SESSION['form_values']['hobbies'] ?? ''); ?>".split(',').filter(h => h.trim().length > 0);
 
         const badges = document.querySelectorAll('.hobby-badge');
         badges.forEach(badge => {
             if (selectedHobbies.includes(badge.getAttribute('data-hobby'))) {
-                badge.classList.add('bg-sky_primary', 'text-blue-900', 'border-sky_primary');
+                badge.classList.add('bg-blue-500', 'text-white');
             }
 
             badge.addEventListener('click', function() {
-                this.classList.toggle('bg-sky_primary');
-                this.classList.toggle('text-blue-900');
-                this.classList.toggle('border-sky_primary');
+                this.classList.toggle('bg-blue-500');
+                this.classList.toggle('text-white');
                 updateFormData();
             });
         });
@@ -308,6 +414,7 @@
         }
     });
 
+
     function toggleForms() {
         var personalDetails = document.getElementById('personalDetails');
         var photoUploadForm = document.getElementById('photoUploadForm');
@@ -318,6 +425,20 @@
         } else {
             personalDetails.style.display = 'none';
             photoUploadForm.style.display = 'block';
+        }
+        window.scrollTo(0, 0);
+    }
+
+    function toggleForms2() {
+        var personalDetails = document.getElementById('photoUploadForm');
+        var MusicForm = document.getElementById('MusicForm');
+
+        if (personalDetails.style.display === 'none') {
+            personalDetails.style.display = 'block';
+            MusicForm.style.display = 'none';
+        } else {
+            personalDetails.style.display = 'none';
+            MusicForm.style.display = 'block';
         }
         window.scrollTo(0, 0);
     }
