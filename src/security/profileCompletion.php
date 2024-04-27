@@ -84,7 +84,7 @@ try {
         if (!updateUserProfile($userId, $dataToUpdate, '../data/users.csv')) {
             throw new Exception('Error updating data in CSV file.');
         }
-        header('Location: /src/pages/app.php');
+        header('Location: /src/pages/profileViewer.php');
         exit();
     }
 } catch (Exception $e) {
