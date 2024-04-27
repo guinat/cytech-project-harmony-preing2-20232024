@@ -259,21 +259,22 @@
     </section>
     <!-------------------------- MUSIC SECTION --------------------------->
     <section id="MusicForm" class="hidden">
-        <div id="musicGrid" class="container mx-auto px-4 my-8">
-            <h2 class="text-3xl font-bold mb-4 text-center">Select Music</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div class="container mx-auto px-4 my-8">
+            <div id="musicGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
             </div>
             <input type="hidden" id="hiddenMusicInput" name="selected_music" value="<?php echo htmlspecialchars($_SESSION['form_values']['selected_music'] ?? '') ?>">
-
         </div>
-        <div class="flex flex-col items-center justify-center mb-4">
+        <p class="text-medium_gray font-semibold text-base text-center w-full">Select at least one music genre to start</p>
+        <div class="flex flex-row gap-6 md:gap-24 justify-center mt-24 mb-24">
             <button type="button" class="p-4 rounded-full border-white border-2 mb-4" onclick="toggleForms2()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
             </button>
-            <button class="bg-white rounded-full w-full hover:bg-gray-300 text-black font-bold py-2 px-4 focus:outline-none" type="submit">
-                Submit
+            <button type="submit" class="p-4 rounded-full border-white border-2 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
             </button>
         </div>
     </section>
@@ -282,15 +283,37 @@
 
 <script>
     const musicList = [{
-            title: "The Life of Pablo",
-            imageUrl: "../../../assets/music/rap/the_life_of_pablo.png",
-            audioUrl: "../../../assets/music/rap/FML.mp3"
+            title: "Pop",
+            imageUrl: "../../../assets/music/pop.png",
         },
         {
-            title: "Nakamura",
-            imageUrl: "../../../assets/music/pop/nakamura.png",
-            audioUrl: "../../../assets/music/pop/Sucette.mp3"
-        }
+            title: "Rock",
+            imageUrl: "../../../assets/music/rock.png",
+        },
+        {
+            title: "Rap",
+            imageUrl: "../../../assets/music/rap.png",
+        },
+        {
+            title: "Jazz",
+            imageUrl: "../../../assets/music/jazz.png",
+        },
+        {
+            title: "Classical",
+            imageUrl: "../../../assets/music/classical.png",
+        },
+        {
+            title: "Metal",
+            imageUrl: "../../../assets/music/metal.png",
+        },
+        {
+            title: "Electronic",
+            imageUrl: "../../../assets/music/electronic.png",
+        },
+        {
+            title: "Funk",
+            imageUrl: "../../../assets/music/funk.png",
+        },
     ];
 
     const selectedMusicTitles = "<?php echo $_SESSION['form_values']['selected_music'] ?? ''; ?>".split(',').map(m => m.trim());
@@ -312,19 +335,17 @@
             this.musics.forEach((music, index) => {
                 const isSelected = this.selectedTitles.includes(music.title);
                 const musicDiv = document.createElement('div');
-                musicDiv.className = `music-card p-4 bg-white rounded-lg shadow-lg cursor-pointer flex flex-col items-center ${isSelected ? 'selected' : ''}`;
+                musicDiv.className = `music-card mb-4 rounded-lg shadow-lg cursor-pointer flex flex-col items-center ${isSelected ? 'selected' : ''}`;
                 musicDiv.innerHTML = `
                     <div class="relative music-badge" data-music-title="${music.title}">
                         <img src="${music.imageUrl}" alt="${music.title}" class="rounded-lg w-48 h-48 object-cover">
-                        <div class="overlay ${isSelected ? '' : 'hidden'} absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center rounded-lg">
-                            <span class="text-white text-2xl">✓</span>
+                        <div class="overlay ${isSelected ? '' : 'hidden'} absolute inset-0 bg-black bg-opacity-50 flex border-2 border-white justify-center items-center rounded-lg">
+                            <span class="text-white text-2xl"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+  <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+</svg>
+</span>
                         </div>
                     </div>
-                    <div class="mt-4 flex gap-2">
-                        <button type="button" onclick="playAudio('audio${index}', event)" class="text-blue-500">Play</button>
-                        <button type="button" onclick="pauseAudio('audio${index}', event)" class="text-red-500">Pause</button>
-                    </div>
-                    <audio id="audio${index}" class="hidden" src="${music.audioUrl}"></audio>
                 `;
                 this.container.appendChild(musicDiv);
             });
@@ -355,18 +376,6 @@
             .map(card => card.querySelector('.music-badge').getAttribute('data-music-title'));
 
         document.getElementById('hiddenMusicInput').value = selectedMusics.join(', ');
-    }
-
-    function playAudio(audioId, event) {
-        event.stopPropagation();
-        const audio = document.getElementById(audioId);
-        audio.play();
-    }
-
-    function pauseAudio(audioId, event) {
-        event.stopPropagation();
-        const audio = document.getElementById(audioId);
-        audio.pause();
     }
 
     function toggleForms2() {
