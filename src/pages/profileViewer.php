@@ -37,7 +37,7 @@ if ($userId) {
 </head>
 
 <body class="font-montserrat text-white bg-dark_gray">
-    <header class="fixed top-0 left-0 right-0">
+    <header class="justify-center items-center mx-auto">
         <div class="flex flex-col gap-4 justify-center items-center px-4 py-3 md:px-6 md:py-4 lg:px-8 lg:py-5">
             <div class="flex items-center">
                 <a href="/index.php">
@@ -54,14 +54,14 @@ if ($userId) {
 
     <!-- User Profile Card -->
     <section class="container mx-auto">
-        <div class="flex gap-24 justify-center items-center min-h-screen">
+        <div class="flex flex-col gap-10 justify-center items-center min-h-1/2 mt-10">
             <div class="bg-white max-w-md md:max-w-lg rounded-xl overflow-hidden">
                 <?php if ($userData) : ?>
                     <div id="carousel" class="relative">
                         <div class="flex overflow-x-hidden relative">
                             <?php for ($i = 14; $i <= 17; $i++) : ?>
                                 <?php if (isset($userData[$i]) && !empty($userData[$i])) : ?>
-                                    <div class="flex-none w-[380px] h-[665px] bg-cover bg-center" style="background-image: url('<?php echo htmlspecialchars($userData[$i]); ?>');">
+                                    <div class="flex-none w-[290px] h-[565px]  md:w-[330px] md:h-[615px] bg-cover bg-center" style="background-image: url('<?php echo htmlspecialchars($userData[$i]); ?>');">
                                         <div class="flex h-full items-end bg-gradient-to-t from-black via-transparent">
                                             <div class="p-4 text-white">
                                                 <h2 class="text-3xl font-bold"><?php echo htmlspecialchars($userData[6]); ?></h2>
@@ -85,10 +85,17 @@ if ($userId) {
                                                 </div>
                                             </div>
                                         </div>
-                                        <hr>
+                                        <div class="w-full border-b border-gray-500"></div>
                                         <div class="bg-black">
                                             <div class="p-4 text-white">
-                                                <p class="text-base font-semibold"><?php echo htmlspecialchars($userData[21]); ?></p>
+                                                <p class="text-base italic font-semibold"><?php echo htmlspecialchars($userData[21]); ?></p>
+                                            </div>
+                                            <div class="w-full border-b border-gray-500"></div>
+                                            <div class="p-4 text-white">
+                                                <h3 class="text-sm uppercase font-semibold mb-4">Additional Information</h3>
+                                                <p class="text-xs font-semibold">Occupation: <?php echo htmlspecialchars($userData[18] ?? 'N/A'); ?></p>
+                                                <p class="text-xs font-semibold">Smoking Status: <?php echo htmlspecialchars($userData[19] ?? 'N/A'); ?></p>
+                                                <p class="text-xs font-semibold">Harmony Score: <?php echo htmlspecialchars($userData[22] ?? 'N/A'); ?></p>
                                             </div>
                                         </div>
                                     </div>
@@ -98,7 +105,7 @@ if ($userId) {
                         <div class="flex justify-center p-4 gap-1 absolute top-0 left-0 right-0">
                             <?php for ($i = 14; $i <= 17; $i++) : ?>
                                 <?php if (isset($userData[$i]) && !empty($userData[$i])) : ?>
-                                    <div class="w-1/2 h-3 bg-gray-500 rounded-full cursor-pointer carousel-indicator" data-slide="<?php echo $i - 14; ?>"></div>
+                                    <div class="w-1/2 h-2.5 bg-gray-500 rounded-full cursor-pointer carousel-indicator" data-slide="<?php echo $i - 14; ?>"></div>
                                 <?php endif; ?>
                             <?php endfor; ?>
                         </div>
@@ -107,14 +114,23 @@ if ($userId) {
                     <p>User information not found.</p>
                 <?php endif; ?>
             </div>
-            <!-- Other User Details -->
-            <div class="bg-black border-2 border-white rounded-xl shadow-lg p-6">
-                <h3 class="text-xl font-semibold mb-4">Additional Information</h3>
-                <p><strong>Occupation:</strong> <?php echo htmlspecialchars($userData[18] ?? 'N/A'); ?></p>
-                <p><strong>Smoking Status:</strong> <?php echo htmlspecialchars($userData[19] ?? 'N/A'); ?></p>
-                <p><strong>Harmony Score:</strong> <?php echo htmlspecialchars($userData[22] ?? 'N/A'); ?></p>
+            <div class="flex flex-row gap-12 mt-14 w-full justify-center items-center mb-12">
+                <a href="/src/pages/profileUpdate.php" class="flex flex-row gap-4 font-bold text-gray-400 px-4 py-2 rounded-xl border-[2px] border-gray-400 items-center">
+                    <span>Edit Profile</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path fill-rule="evenodd" d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+                <a href="/src/pages/app.php" class="flex flex-row gap-4 font-bold text-white px-4 py-2 rounded-xl border-[2px] border-white items-center">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-b from-sky_primary to-rose_primary">Continue</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+
             </div>
         </div>
+
     </section>
 </body>
 

@@ -53,7 +53,7 @@
                             Submit
                         </button>
                     </div>
-                    <span class="text-sm items-left text-gray-400">Don't have an account yet ? <a class="text-sky_primary font-semibold" href="/src/pages/sign-up.php">Sign Up</a></span>
+                    <span class="text-sm items-left text-gray-400">Don't have an account yet ? <a class="text-sky_primary font-semibold" href="/src/pages/signUp.php">Sign Up</a></span>
 
                 </form>
             </div>
