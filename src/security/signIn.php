@@ -10,8 +10,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $userFound = false;
 
     if (($handle = fopen($csvFile, 'r')) !== FALSE) {
+        fgetcsv($handle);
+
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            if ($data[1] === $username && password_verify($password, $data[2])) {
+            if ($data[3] === $username && password_verify($password, $data[4])) {
                 $userFound = true;
                 $_SESSION['user_id'] = $data[0];
                 $_SESSION['username'] = $username;

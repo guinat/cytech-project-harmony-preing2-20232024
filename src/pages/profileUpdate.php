@@ -1,5 +1,9 @@
 <?php
+
+
 session_start();
+
+
 echo '
     <pre>' . print_r($_SESSION, true) . '</pre>';
 ?>
@@ -15,17 +19,28 @@ echo '
     <title>Complete Your Profile</title>
 </head>
 
-<body class="bg-gray-100">
-    <?php require_once '/src/components/header/header.php'; ?>
+<body class="font-montserrat text-white bg-dark_gray">
+    <header>
+        <div class="flex justify-between items-center px-4 py-3 md:px-6 md:py-4 lg:px-8 lg:py-5">
+            <div class="flex items-center">
+                <a href="/index.php">
+                    <img src="/assets/logo_colored.svg" alt="Logo" class="w-8">
+                </a>
+            </div>
+            <div class="flex flex-row gap-6 items-center">
+                <a href="/src/security/logout.php" class="font-bold text-white px-4 py-2 rounded-full border-[2px] border-white">Log Out</a>
+            </div>
+        </div>
+    </header>
 
-
-    <div class="container mx-auto px-4">
-        <h2 class="text-2xl font-semibold text-gray-800 my-5">Update Your Profile</h2>
-        <?php require_once '/src/components/form/update-profile.php'; ?>
-    </div>
-
-    <?php require_once '/src/components/footer/footer.php'; ?>
-
+    <section class="container mx-auto px-4">
+        <div class="justify-center flex">
+            <h2 class="text-2xl text-white font-semibold my-5">Complete Your Profile</h2>
+        </div>
+        <div class="items-center justify-center flex">
+            <?php require_once '../../src/components/form/update-profile.php'; ?>
+        </div>
+    </section>
 </body>
 
 </html>

@@ -55,6 +55,7 @@ try {
         }
 
         $user->setPhotos($uploadedPhotos);
+        $_SESSION['user_photos'] = $user->getPhotos();
         $userPhotos = $user->getPhotos();
 
 
@@ -73,11 +74,11 @@ try {
             15 => $userPhotos['photo2'] ?? '', // Required Photo 2
             16 => $userPhotos['photo3'] ?? '', // Additional Photo 1
             17 => $userPhotos['photo4'] ?? '', // Additional Photo 2
-            19 => $user->getOccupation(), // Occupation
-            20 => $user->getSmokingStatus(), // Smoking Status
-            21 => $user->getHobbies(), // Hobbies
-            22 => $user->getAboutMe(), // About Me
-            23 => '0' // Harmony Score
+            18 => $user->getOccupation(), // Occupation
+            19 => $user->getSmokingStatus(), // Smoking Status
+            20 => $user->getHobbies(), // Hobbies
+            21 => $user->getAboutMe(), // About Me
+            22 => '0' // Harmony Score
         ];
 
 

@@ -10,21 +10,56 @@ try {
 
         $userId = $_SESSION['user_id'] ?? null;
         if (!$userId) {
-            echo 'User ID not found in session.';
-            exit;
+            throw new Exception('User ID not found in session.');
         }
 
-        $user = getUserById($userId, '/src/data/users.csv');
+        $username = $_POST['username'];
+        $currentPassword = $_POST['current_password'];
+        $newPassword = $_POST['new-password'];
+        $confirmPassword = $_POST['confirm-password'];
+
+        if (!empty($newPassword) && !empty($confirmPassword)) {
+            if ($newPassword !== $confirmPassword) {
+                throw new Exception("Passwords do not match.");
+            }
+            $user->setPassword($newPassword);
+        }
+
+        $user = getUserById($userId, '../data/users.csv');
         if (!$user) {
             throw new Exception('User not found.');
         }
-        if ($user) {
-            $_SESSION['username'] = $user->getUsername();
-        } else {
-            throw new Exception('User not found.');
+
+        $csvFile = '../data/users.csv';
+        $userFound = false;
+
+        if (($handle = fopen($csvFile, 'r')) !== FALSE) {
+            fgetcsv($handle);
+
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                if ($data[3] === $username) {
+                    if (password_verify($currentPassword, $data[4])) {
+                        $userFound = true;
+                        break;
+                    } else {
+                        fclose($handle);
+                        throw new Exception("Current password is incorrect.");
+                    }
+                }
+            }
+            fclose($handle);
         }
 
-        $user->setUsername(sanitizeInput($_POST['username'] ?? ''));
+        if (!$userFound) {
+            throw new Exception("User not found with given username.");
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            throw new Exception("Passwords do not match.");
+        }
+
+        $user->setUpdatedAt(date('Y-m-d H:i:s'));
+
         $user->setFirstName(sanitizeInput($_POST['first_name'] ?? ''));
         $user->setLastName(sanitizeInput($_POST['last_name'] ?? ''));
         $user->setGender(sanitizeInput($_POST['gender'] ?? ''));
@@ -38,57 +73,60 @@ try {
         $user->setAboutMe(sanitizeInput($_POST['about_me'] ?? ''));
         $user->setMusicPreferences(sanitizeInput($_POST['selected_music'] ?? ''));
 
-        // $uploadDir = '../data/photos/';
-        // $photoFields = ['photo1', 'photo2', 'photo3', 'photo4'];
-        // $uploadedPhotos = $user->getPhotos();
+        $uploadedPhotos = [];
+        $uploadDir = '../data/photos/';
+        $photoFields = ['photo1', 'photo2', 'photo3', 'photo4'];
 
-        // foreach ($photoFields as $photoField) {
-        //     if (isset($_FILES[$photoField]) && $_FILES[$photoField]['error'] === UPLOAD_ERR_OK) {
-        //         $oldPhoto = $uploadedPhotos[$photoField] ?? null;
-        //         $fileName = $_SESSION['username'] . "_" . basename($_FILES[$photoField]['name']);
-        //         $filePath = $uploadDir . $fileName;
+        foreach ($photoFields as $photoField) {
+            $photoKey = $photoField;
+            $existingPhotoKey = 'existing_' . $photoField;
 
-        //         if (move_uploaded_file($_FILES[$photoField]['tmp_name'], $filePath)) {
-        //             $uploadedPhotos[$photoField] = $filePath;
-        //             $_SESSION['form_values'][$photoField] = $filePath;
+            if (isset($_FILES[$photoKey]) && $_FILES[$photoKey]['error'] == UPLOAD_ERR_OK) {
+                $fileName = $_SESSION['username'] . "_" . $photoKey . ".png";
+                $filePath = $uploadDir . $fileName;
 
-        //             if ($oldPhoto && $oldPhoto != $filePath && file_exists($oldPhoto)) {
-        //                 unlink($oldPhoto);
-        //             }
-        //         }
-        //     }
-        // }
+                if (move_uploaded_file($_FILES[$photoKey]['tmp_name'], $filePath)) {
+                    $uploadedPhotos[$photoKey] = $filePath;
+                }
+            } elseif (isset($_POST[$existingPhotoKey]) && !empty($_POST[$existingPhotoKey])) {
+                $uploadedPhotos[$photoKey] = $_POST[$existingPhotoKey];
+            }
+        }
 
-        // $user->setPhotos($uploadedPhotos);
-        // $userPhotos = $user->getPhotos();
+        $user->setPhotos($uploadedPhotos);
+        $_SESSION['user_photos'] = $user->getPhotos();
+        $userPhotos = $user->getPhotos();
+
 
 
         $dataToUpdate = [
-            1 => $user->getUsername(),  // Username
-            4 => $user->getFirstName(), // First Name
-            5 => $user->getLastName(), // Last Name
-            6 => $user->getGender(), // Gender
-            7 => $user->getDateOfBirth(), // Date of Birth
-            8 => $user->getCountry(), // Country
-            9 => $user->getCity(), // City
-            10 => $user->getLookingFor(), // Looking For
-            11 => $user->getMusicPreferences(), // Music Preferences
-            //12 => $userPhotos['photo1'] ?? '', // Required Photo 1
-            //13 => $userPhotos['photo2'] ?? '', // Required Photo 2
-            //14 => $userPhotos['photo3'] ?? '', // Additional Photo 1
-            //15 => $userPhotos['photo4'] ?? '', // Additional Photo 2
-            16 => $user->getOccupation(), // Occupation
-            17 => $user->getSmokingStatus(), // Smoking Status
-            18 => $user->getHobbies(), // Hobbies
-            23 => $user->getAboutMe(), // About Me
-            25 => '0' // Harmony Score
+            2 => $user->getUpdatedAt(),
+            // 4 => $user->getPassword(), // Password
+            5 => 'ROLE_USER',  // Role
+            6 => $user->getFirstName(), // First Name
+            7 => $user->getLastName(), // Last Name
+            8 => $user->getGender(), // Gender
+            9 => $user->getDateOfBirth(), // Date of Birth
+            10 => $user->getCountry(), // Country
+            11 => $user->getCity(), // City
+            12 => $user->getLookingFor(), // Looking For
+            13 => $user->getMusicPreferences(), // Music Preferences
+            14 => $userPhotos['photo1'] ?? '', // Required Photo 1
+            15 => $userPhotos['photo2'] ?? '', // Required Photo 2
+            16 => $userPhotos['photo3'] ?? '', // Additional Photo 1
+            17 => $userPhotos['photo4'] ?? '', // Additional Photo 2
+            18 => $user->getOccupation(), // Occupation
+            19 => $user->getSmokingStatus(), // Smoking Status
+            20 => $user->getHobbies(), // Hobbies
+            21 => $user->getAboutMe(), // About Me
+            22 => '0' // Harmony Score
         ];
 
 
-        if (!updateUserProfile($userId, $dataToUpdate, '/src/data/users.csv')) {
+        if (!updateUserProfile($userId, $dataToUpdate, '../data/users.csv')) {
             throw new Exception('Error updating data in CSV file.');
         }
-        header('Location: /src/pages/app.php');
+        header('Location: /src/pages/profileViewer.php');
         exit();
     }
 } catch (Exception $e) {
