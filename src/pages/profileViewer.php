@@ -19,6 +19,8 @@ $userData = null;
 $userId = $_SESSION['user_id'] ?? null;
 if ($userId) {
     $userData = getUserById($userId, '../data/users.csv');
+} else {
+    echo 'User ID not found in session. ahaha';
 }
 ?>
 

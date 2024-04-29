@@ -237,8 +237,7 @@
                 <?php for ($i = 1; $i <= 4; $i++) : ?>
                     <div class="photo-card relative w-[165px] h-[240px] border-2 border-dashed border-medium_gray bg-black rounded-xl cursor-pointer overflow-visible" onclick="document.getElementById('photo-upload<?= $i ?>').click()">
                         <input type="file" name="photo<?= $i ?>" id="photo-upload<?= $i ?>" class="hidden" accept="image/*" onchange="loadImage(event, 'photo<?= $i ?>')">
-                        <input type="hidden" name="existing_photo<?= $i ?>" value="<?php echo htmlspecialchars($_SESSION['user_photos']['photo' . $i] ?? ''); ?>">
-                        <div id="photo<?= $i ?>" class="photo-placeholder rounded-xl absolute inset-0 flex items-center justify-center" style="background-image: url('<?php echo isset($_SESSION['user_photos']['photo' . $i]) ? htmlspecialchars($_SESSION['user_photos']['photo' . $i]) : 'path/to/default/image.png'; ?>'); background-size: cover; background-position: center;">
+                        <div id="photo<?= $i ?>" class="photo-placeholder rounded-xl absolute inset-0 flex items-center justify-center" style="background-image: url('<?php echo isset($_SESSION['user_photos']['photo' . $i]) ? htmlspecialchars($_SESSION['user_photos']['photo' . $i]) : ''; ?>'); background-size: cover; background-position: center;">
                             <?php if (!empty($_SESSION['user_photos']['photo' . $i])) : ?>
                                 <div class="delete-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-b from-red_primary to-rose_secondary" onclick="event.stopPropagation(); deleteImage('photo<?= $i ?>');">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
