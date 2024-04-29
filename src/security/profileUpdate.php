@@ -79,7 +79,6 @@ try {
 
         foreach ($photoFields as $photoField) {
             $photoKey = $photoField;
-            $existingPhotoKey = 'existing_' . $photoField;
 
             if (isset($_FILES[$photoKey]) && $_FILES[$photoKey]['error'] == UPLOAD_ERR_OK) {
                 $fileName = $_SESSION['username'] . "_" . $photoKey . ".png";
@@ -88,8 +87,6 @@ try {
                 if (move_uploaded_file($_FILES[$photoKey]['tmp_name'], $filePath)) {
                     $uploadedPhotos[$photoKey] = $filePath;
                 }
-            } elseif (isset($_POST[$existingPhotoKey]) && !empty($_POST[$existingPhotoKey])) {
-                $uploadedPhotos[$photoKey] = $_POST[$existingPhotoKey];
             }
         }
 
