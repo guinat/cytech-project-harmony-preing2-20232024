@@ -41,9 +41,9 @@ if ($userId) {
     <!-- Header for small screens -->
     <header class="bg-dark_gray border-b border-gray-500 text-white p-4 lg:hidden">
         <div class="flex items-center justify-between">
-            <!-- Mobile header content here -->
+            <!-- Mobile header content -->
             <a href="#" class="flex items-center">
-                <img src="path-to-your-profile-image.jpg" class="h-12 w-12 rounded-full" alt="Profile image">
+                <img src="" class="h-12 w-12 rounded-full" alt="Profile image">
                 <span class="ml-3 text-sm font-semibold">Alrick</span>
             </a>
             <!-- Other elements for mobile header -->
@@ -71,7 +71,6 @@ if ($userId) {
         <div class="flex items-center p-4 bg-gray-700 rounded-lg shadow-md">
             <div class="mx-auto text-center">
                 <svg class="h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <!-- Icon here -->
                 </svg>
                 <p class="text-xs mt-2">Say Hello</p>
                 <p class="text-xs">Want to start a conversation?</p>
