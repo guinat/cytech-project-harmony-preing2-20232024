@@ -20,6 +20,23 @@ $userId = $_SESSION['user_id'] ?? null;
 if ($userId) {
     $userData = getUserById($userId, '../data/users.csv');
 }
+
+function getLastThreeUsers($csvFilePath, $currentUserId)
+{
+    $users = [];
+    if (($handle = fopen($csvFilePath, "r")) !== FALSE) {
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            if ($data[0] !== $currentUserId) {
+                array_push($users, $data);
+            }
+        }
+        fclose($handle);
+    }
+    return array_slice(array_reverse($users), 0, 3);
+}
+
+$currentUser = $_SESSION['user_id'] ?? null;
+$users = getLastThreeUsers('../data/users.csv', $currentUser);
 ?>
 
 
@@ -43,8 +60,8 @@ if ($userId) {
         <div class="flex items-center justify-between">
             <!-- Mobile header content -->
             <a href="#" class="flex items-center">
-                <img src="" class="h-12 w-12 rounded-full" alt="Profile image">
-                <span class="ml-3 text-sm font-semibold">Alrick</span>
+                <img src="<?php echo htmlspecialchars($userData[14]); ?>" class="flex w-10 h-10 rounded-full object-cover"></img>
+                <span class="ml-3 text-xs uppercase font-bold"><?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : ''; ?></span>
             </a>
             <!-- Other elements for mobile header -->
         </div>
@@ -52,19 +69,21 @@ if ($userId) {
 
     <aside class="hidden lg:block w-80 h-screen bg-dark_gray border-r border-gray-500 overflow-y-auto">
 
-        <div class="bg-gradient-to-r from-sky_primary to-rose_primary p-2 mb-6">
-            <a href="#" class="flex items-center pl-2.5 mb-5">
-                <img src="path-to-your-profile-image.jpg" class="h-12 w-12 rounded-full" alt="Profile image">
-                <span class="ml-3 text-sm font-semibold">Alrick</span>
-            </a>
+        <div class="bg-gradient-to-r from-sky_primary to-rose_primary p-5 mb-6">
+            <div class="flex items-center pl-2.5">
+                <div class="flex items-center justify-center w-10 h-10 rounded-full overflow-hidden">
+                    <img src="<?php echo htmlspecialchars($userData[14]); ?>" class="object-cover">
+                </div>
+                <span class="ml-3 text-xs uppercase font-bold"><?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : ''; ?></span>
+            </div>
         </div>
         <div class="flex-1 flex items-center justify-center mb-6">
             <ul class="flex flex-row w-full justify-between mx-10">
                 <li>
-                    <span>Visitors</span>
+                    <span class="font-semibold text-base">Visitors</span>
                 </li>
                 <li>
-                    <span>Messages</span>
+                    <span class="font-semibold text-base">Messages</span>
                 </li>
             </ul>
         </div>
@@ -78,9 +97,22 @@ if ($userId) {
         </div>
     </aside>
 
+
     <!-- Main content -->
     <main class="flex-1 justify-center flex items-center">
         <section class="container mx-auto">
+            <form class="flex items-center max-w-sm lg:max-w-md mx-auto mt-8 lg:mt-0">
+                <label for="simple-search" class="sr-only">Search</label>
+                <div class="relative w-full">
+                    <input type="text" id="simple-search" class="bg-black border border-medium_gray text-white text-sm rounded-lg block w-full ps-3 p-2.5" placeholder="Search for users..." />
+                </div>
+                <button type="submit" class="p-2.5 ms-2 text-sm font-medium text-white bg-gradient-to-r from-sky_primary to-rose_primary rounded-lg border-2 border-white focus:outline-none">
+                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                    <span class="sr-only">Search</span>
+                </button>
+            </form>
             <div class="flex flex-col gap-10 justify-center items-center min-h-1/2 mt-10">
                 <div class="bg-white max-w-md md:max-w-lg rounded-xl overflow-hidden">
                     <?php if ($userData) : ?>
@@ -141,20 +173,17 @@ if ($userId) {
                         <p>User information not found.</p>
                     <?php endif; ?>
                 </div>
-                <div class="flex flex-row gap-12 mt-14 w-full justify-center items-center mb-12">
-                    <a href="/src/pages/profileUpdate.php" class="flex flex-row gap-4 font-bold text-gray-400 px-4 py-2 rounded-xl border-[2px] border-gray-400 items-center">
-                        <span>Edit Profile</span>
+                <div class="flex flex-row gap-48 items-center">
+                    <div class="border-2 border-white rounded-full p-3">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                            <path fill-rule="evenodd" d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M11.03 3.97a.75.75 0 0 1 0 1.06l-6.22 6.22H21a.75.75 0 0 1 0 1.5H4.81l6.22 6.22a.75.75 0 1 1-1.06 1.06l-7.5-7.5a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
                         </svg>
-                    </a>
-                    <a href="/src/pages/app.php" class="flex flex-row gap-4 font-bold text-white px-4 py-2 rounded-xl border-[2px] border-white items-center">
-                        <span class="text-transparent bg-clip-text bg-gradient-to-b from-sky_primary to-rose_primary">Continue</span>
+                    </div>
+                    <div class="border-2 border-white rounded-full p-3">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                             <path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                         </svg>
-                    </a>
-
+                    </div>
                 </div>
             </div>
 
