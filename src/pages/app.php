@@ -1,45 +1,79 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 
-function getUserById($userId, $csvFilePath)
-{
-    if (($handle = fopen($csvFilePath, "r")) !== FALSE) {
-        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            if ($data[0] == $userId) {
-                fclose($handle);
-                return $data;
-            }
-        }
-        fclose($handle);
-    }
-    return null;
-}
+include_once '../entity/user.php';
 
-$userData = null;
-$userId = $_SESSION['user_id'] ?? null;
-if ($userId) {
-    $userData = getUserById($userId, '../data/users.csv');
-}
-
-function getLastThreeUsers($csvFilePath, $currentUserId)
+function getUsersFromCSV($csvFilePath, $excludeUserId = null)
 {
     $users = [];
     if (($handle = fopen($csvFilePath, "r")) !== FALSE) {
+        fgetcsv($handle);
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            if ($data[0] !== $currentUserId) {
-                array_push($users, $data);
+            if ($data[0] == $excludeUserId) {
+                continue;
             }
+            $user = new UserEntity($data[0], $data[3], $data[4]);
+            $user->getId($data[1]);
+            $user->setFirstName($data[6]);
+            $user->setLastName($data[7]);
+            $user->setGender($data[8]);
+            $user->setDateOfBirth($data[9]);
+            $user->setCountry($data[10]);
+            $user->setCity($data[11]);
+            $user->setLookingFor($data[12]);
+            $user->setMusicPreferences($data[13]);
+            $user->setPhotos(array_slice($data, 14, 4));
+            $user->setOccupation($data[18]);
+            $user->setSmokingStatus($data[19]);
+            $user->setHobbies($data[20]);
+            $user->setAboutMe($data[21]);
+            $users[] = $user;
         }
         fclose($handle);
     }
-    return array_slice(array_reverse($users), 0, 3);
+
+    usort($users, function ($a, $b) {
+        return $b->getId() - $a->getId();
+    });
+
+    foreach ($users as $user) {
+        echo $user->getUsername() . ' - ' . $user->getId() . '<br>';
+    }
+
+    return array_slice($users, 0, 3);
 }
 
-$currentUser = $_SESSION['user_id'] ?? null;
-$users = getLastThreeUsers('../data/users.csv', $currentUser);
+$currentUserId = $_SESSION['user_id'] ?? null;
+$lastThreeUsers = getUsersFromCSV('../data/users.csv', $currentUserId);
+
+foreach ($lastThreeUsers as $user) {
+    echo "<div style='margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;'>";
+    echo "<strong>Username:</strong> " . htmlspecialchars($user->getUsername()) . "<br/>";
+    echo "<strong>First Name:</strong> " . htmlspecialchars($user->getFirstName()) . "<br/>";
+    echo "<strong>Last Name:</strong> " . htmlspecialchars($user->getLastName()) . "<br/>";
+    echo "<strong>Gender:</strong> " . htmlspecialchars($user->getGender()) . "<br/>";
+    echo "<strong>Date of Birth:</strong> " . htmlspecialchars($user->getDateOfBirth()) . "<br/>";
+    echo "<strong>Country:</strong> " . htmlspecialchars($user->getCountry()) . "<br/>";
+    echo "<strong>City:</strong> " . htmlspecialchars($user->getCity()) . "<br/>";
+    echo "<strong>Looking For:</strong> " . htmlspecialchars($user->getLookingFor()) . "<br/>";
+    echo "<strong>Music Preferences:</strong> " . htmlspecialchars(implode(", ", $user->getMusicPreferences())) . "<br/>";
+    echo "<strong>Occupation:</strong> " . htmlspecialchars($user->getOccupation()) . "<br/>";
+    echo "<strong>Smoking Status:</strong> " . htmlspecialchars($user->getSmokingStatus()) . "<br/>";
+    echo "<strong>Hobbies:</strong> " . htmlspecialchars($user->getHobbies()) . "<br/>";
+    echo "<strong>About Me:</strong> " . htmlspecialchars($user->getAboutMe()) . "<br/>";
+    echo "<strong>Photos:</strong> ";
+    foreach ($user->getPhotos() as $photo) {
+        echo "<img src='" . htmlspecialchars($photo) . "' style='height: 100px; width: auto; margin-right: 5px;' />";
+    }
+    echo "<br/>";
+    echo "</div>";
+}
+
+
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">

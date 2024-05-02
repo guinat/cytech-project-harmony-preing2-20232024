@@ -214,8 +214,8 @@ class UserEntity
 
     public function setMusicPreferences($musicPreferences)
     {
-        if (!is_string($musicPreferences) || empty($musicPreferences)) {
-            throw new Exception("Musics & ... should be a string.");
+        if (is_string($musicPreferences)) {
+            $musicPreferences = explode(', ', $musicPreferences);
         }
         $this->musicPreferences = $musicPreferences;
     }
