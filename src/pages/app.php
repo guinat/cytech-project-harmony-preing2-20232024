@@ -67,17 +67,28 @@ $users = getLastThreeUsers('../data/users.csv', $currentUser);
         </div>
     </header>
 
-    <aside class="hidden lg:block w-80 h-screen bg-dark_gray border-r border-gray-500 overflow-y-auto">
+    <aside class="relative hidden lg:block w-80 h-screen bg-black border-r border-gray-500 overflow-y-auto">
 
-        <div class="bg-gradient-to-r from-sky_primary to-rose_primary p-5 mb-6">
-            <div class="flex items-center pl-2.5">
-                <div class="flex items-center justify-center w-10 h-10 rounded-full overflow-hidden">
+        <div class="bg-gradient-to-r from-sky_primary to-rose_primary flex items-center justify-between p-5 mb-6">
+            <div class="flex items-center">
+                <div class="flex items-center justify-center w-10 h-10 border-2 border-white  rounded-full overflow-hidden">
                     <img src="<?php echo htmlspecialchars($userData[14]); ?>" class="object-cover">
                 </div>
                 <span class="ml-3 text-xs uppercase font-bold"><?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : ''; ?></span>
             </div>
+            <div class="bg-black bg-opacity-60 rounded-full flex items-center justify-center w-5 h-5 p-3">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                        <path fill-rule="evenodd" d="M8.34 1.804A1 1 0 0 1 9.32 1h1.36a1 1 0 0 1 .98.804l.295 1.473c.497.144.971.342 1.416.587l1.25-.834a1 1 0 0 1 1.262.125l.962.962a1 1 0 0 1 .125 1.262l-.834 1.25c.245.445.443.919.587 1.416l1.473.294a1 1 0 0 1 .804.98v1.361a1 1 0 0 1-.804.98l-1.473.295a6.95 6.95 0 0 1-.587 1.416l.834 1.25a1 1 0 0 1-.125 1.262l-.962.962a1 1 0 0 1-1.262.125l-1.25-.834a6.953 6.953 0 0 1-1.416.587l-.294 1.473a1 1 0 0 1-.98.804H9.32a1 1 0 0 1-.98-.804l-.295-1.473a6.957 6.957 0 0 1-1.416-.587l-1.25.834a1 1 0 0 1-1.262-.125l-.962-.962a1 1 0 0 1-.125-1.262l.834-1.25a6.957 6.957 0 0 1-.587-1.416l-1.473-.294A1 1 0 0 1 1 10.68V9.32a1 1 0 0 1 .804-.98l1.473-.295c.144-.497.342-.971.587-1.416l-.834-1.25a1 1 0 0 1 .125-1.262l.962-.962A1 1 0 0 1 5.38 3.03l1.25.834a6.957 6.957 0 0 1 1.416-.587l.294-1.473ZM13 10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" clip-rule="evenodd" />
+                    </svg>
+                </span>
+            </div>
+
+
         </div>
-        <div class="flex-1 flex items-center justify-center mb-6">
+
+
+        <!-- <div class="flex-1 flex items-center justify-center mb-6">
             <ul class="flex flex-row w-full justify-between mx-10">
                 <li>
                     <span class="font-semibold text-base">Visitors</span>
@@ -94,12 +105,37 @@ $users = getLastThreeUsers('../data/users.csv', $currentUser);
                 <p class="text-xs mt-2">Say Hello</p>
                 <p class="text-xs">Want to start a conversation?</p>
             </div>
-        </div>
+        </div> -->
+        <div class="absolute left-0 right-0 top-1/3 mb-6">
+            <div class="flex mx-4 items-center">
+                <span class="font-bold text-xl text-left w-full mb-4">Subscribe to unlock all features</span>
+            </div>
+            <!-- CARD -->
+            <div class="flex justify-center items-center mb-4">
+                <a href="/src/pages/subscribe.php" class="relative bg-dark_gray w-full mx-4 h-fit rounded-xl shadow-md p-4">
+                    <div class="flex flex-col gap-2 justify-start">
+                        <div class="flex flex-row gap-1 ml-2">
+                            <img class="w-6 h-auto" src="/assets/logo_colored.svg" alt="logo">
+                            <h1 class="font-extrabold text-xl italic">Harmony <span class="text-transparent bg-clip-text bg-gradient-to-br from-sky_primary to-rose_primary text-2xl">Pulse</span></h1>
+                        </div>
+                        <span class="ml-2 text-medium_gray text-base font-semibold">
+                            Level up on harmony
+                        </span>
+                    </div>
+                    <span class="absolute top-[-4px] right-0">
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gradient-to-br from-sky_primary to-rose_primary opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-gradient-to-br from-sky_primary to-rose_primary"></span>
+                        </span>
+                    </span>
+                </a>
+            </div>
+
     </aside>
 
 
     <!-- Main content -->
-    <main class="flex-1 justify-center flex items-center">
+    <main class="flex-1 justify-center flex items-center bg-dark_gray">
         <section class="container mx-auto">
             <form class="flex items-center max-w-sm lg:max-w-md mx-auto mt-8 lg:mt-0">
                 <label for="simple-search" class="sr-only">Search</label>
