@@ -136,6 +136,11 @@ class UserEntity
         return $this->aboutMe;
     }
 
+    public function getHarmony()
+    {
+        return $this->harmony;
+    }
+
     // Setters
     public function setUpdatedAt($date)
     {
@@ -214,8 +219,8 @@ class UserEntity
 
     public function setMusicPreferences($musicPreferences)
     {
-        if (is_string($musicPreferences)) {
-            $musicPreferences = explode(', ', $musicPreferences);
+        if (!is_string($musicPreferences) || empty($musicPreferences)) {
+            throw new Exception("Musics & ... should be a string.");
         }
         $this->musicPreferences = $musicPreferences;
     }

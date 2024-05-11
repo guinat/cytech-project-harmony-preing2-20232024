@@ -4,6 +4,7 @@ error_reporting(E_ALL);
 
 session_start();
 
+
 include_once '../entity/user.php';
 
 function getUsersFromCSV($csvFilePath, $excludeUserId = null)
@@ -39,38 +40,11 @@ function getUsersFromCSV($csvFilePath, $excludeUserId = null)
         return $b->getId() - $a->getId();
     });
 
-    foreach ($users as $user) {
-        echo $user->getUsername() . ' - ' . $user->getId() . '<br>';
-    }
-
-    return array_slice($users, 0, 3);
+    return array_slice($users, 0, 20);
 }
 
 $currentUserId = $_SESSION['user_id'] ?? null;
-$lastThreeUsers = getUsersFromCSV('../data/users.csv', $currentUserId);
-
-foreach ($lastThreeUsers as $user) {
-    echo "<div style='margin-bottom: 20px; padding: 10px; border: 1px solid #ccc;'>";
-    echo "<strong>Username:</strong> " . htmlspecialchars($user->getUsername()) . "<br/>";
-    echo "<strong>First Name:</strong> " . htmlspecialchars($user->getFirstName()) . "<br/>";
-    echo "<strong>Last Name:</strong> " . htmlspecialchars($user->getLastName()) . "<br/>";
-    echo "<strong>Gender:</strong> " . htmlspecialchars($user->getGender()) . "<br/>";
-    echo "<strong>Date of Birth:</strong> " . htmlspecialchars($user->getDateOfBirth()) . "<br/>";
-    echo "<strong>Country:</strong> " . htmlspecialchars($user->getCountry()) . "<br/>";
-    echo "<strong>City:</strong> " . htmlspecialchars($user->getCity()) . "<br/>";
-    echo "<strong>Looking For:</strong> " . htmlspecialchars($user->getLookingFor()) . "<br/>";
-    echo "<strong>Music Preferences:</strong> " . htmlspecialchars(implode(", ", $user->getMusicPreferences())) . "<br/>";
-    echo "<strong>Occupation:</strong> " . htmlspecialchars($user->getOccupation()) . "<br/>";
-    echo "<strong>Smoking Status:</strong> " . htmlspecialchars($user->getSmokingStatus()) . "<br/>";
-    echo "<strong>Hobbies:</strong> " . htmlspecialchars($user->getHobbies()) . "<br/>";
-    echo "<strong>About Me:</strong> " . htmlspecialchars($user->getAboutMe()) . "<br/>";
-    echo "<strong>Photos:</strong> ";
-    foreach ($user->getPhotos() as $photo) {
-        echo "<img src='" . htmlspecialchars($photo) . "' style='height: 100px; width: auto; margin-right: 5px;' />";
-    }
-    echo "<br/>";
-    echo "</div>";
-}
+$lastUsers = getUsersFromCSV('../data/users.csv', $currentUserId);
 
 
 ?>
@@ -106,9 +80,9 @@ foreach ($lastThreeUsers as $user) {
         <div class="bg-gradient-to-r from-sky_primary to-rose_primary flex items-center justify-between p-5 mb-6">
             <div class="flex items-center">
                 <div class="flex items-center justify-center w-10 h-10 border-2 border-white  rounded-full overflow-hidden">
-                    <img src="<?php echo htmlspecialchars($userData[14]); ?>" class="object-cover">
+                    <img src="<?php echo isset($_SESSION['user_photos']['photo1']) ? htmlspecialchars($_SESSION['user_photos']['photo1']) : '/path/to/default/image.png'; ?>" class="object-cover">
                 </div>
-                <span class="ml-3 text-xs uppercase font-bold"><?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : ''; ?></span>
+                <span class="ml-3 text-xs uppercase font-bold"><?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['form_values']['first_name']) : ''; ?></span>
             </div>
             <div class="bg-black bg-opacity-60 rounded-full flex items-center justify-center w-5 h-5 p-3">
                 <span>
@@ -120,26 +94,6 @@ foreach ($lastThreeUsers as $user) {
 
 
         </div>
-
-
-        <!-- <div class="flex-1 flex items-center justify-center mb-6">
-            <ul class="flex flex-row w-full justify-between mx-10">
-                <li>
-                    <span class="font-semibold text-base">Visitors</span>
-                </li>
-                <li>
-                    <span class="font-semibold text-base">Messages</span>
-                </li>
-            </ul>
-        </div>
-        <div class="flex items-center p-4 bg-gray-700 rounded-lg shadow-md">
-            <div class="mx-auto text-center">
-                <svg class="h-8 w-8 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                </svg>
-                <p class="text-xs mt-2">Say Hello</p>
-                <p class="text-xs">Want to start a conversation?</p>
-            </div>
-        </div> -->
         <div class="absolute left-0 right-0 top-1/3 mb-6">
             <div class="flex mx-4 items-center">
                 <span class="font-bold text-xl text-left w-full mb-4">Subscribe to unlock all features</span>
@@ -167,7 +121,6 @@ foreach ($lastThreeUsers as $user) {
 
     </aside>
 
-
     <!-- Main content -->
     <main class="flex-1 justify-center flex items-center bg-dark_gray">
         <section class="container mx-auto">
@@ -185,95 +138,106 @@ foreach ($lastThreeUsers as $user) {
             </form>
             <div class="flex flex-col gap-10 justify-center items-center min-h-1/2 mt-10">
                 <div class="bg-white max-w-md md:max-w-lg rounded-xl overflow-hidden">
-                    <?php if ($userData) : ?>
-                        <div id="carousel" class="relative">
-                            <div class="flex overflow-x-hidden relative">
-                                <?php for ($i = 14; $i <= 17; $i++) : ?>
-                                    <?php if (isset($userData[$i]) && !empty($userData[$i])) : ?>
-                                        <div class="flex-none w-[290px] h-[565px]  md:w-[330px] md:h-[615px] bg-cover bg-center" style="background-image: url('<?php echo htmlspecialchars($userData[$i]); ?>');">
-                                            <div class="flex h-full items-end bg-gradient-to-t from-black via-transparent">
-                                                <div class="p-4 text-white">
-                                                    <h2 class="text-3xl font-bold"><?php echo htmlspecialchars($userData[6]); ?></h2>
-                                                    <div class="text-sm flex gap-2 items-center mb-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                                            <path fill-rule="evenodd" d="M19.952 1.651a.75.75 0 0 1 .298.599V16.303a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.403-4.909l2.311-.66a1.5 1.5 0 0 0 1.088-1.442V6.994l-9 2.572v9.737a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.402-4.909l2.31-.66a1.5 1.5 0 0 0 1.088-1.442V5.25a.75.75 0 0 1 .544-.721l10.5-3a.75.75 0 0 1 .658.122Z" clip-rule="evenodd" />
-                                                        </svg>
-                                                        <p><?php echo htmlspecialchars($userData[13]); ?></p>
-                                                    </div>
-                                                    <div class="text-sm flex gap-2 items-center mb-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                                            <path fill-rule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" />
-                                                        </svg>
-                                                        <p><?php echo htmlspecialchars($userData[11]); ?></p>
-                                                    </div>
-                                                    <div class="text-sm flex gap-2 items-center mb-0">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                                                            <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-                                                        </svg>
-                                                        <p><?php echo htmlspecialchars($userData[20]); ?></p>
-                                                    </div>
-                                                </div>
+                    <div id="carousel" class="relative">
+                        <div class="flex overflow-x-hidden relative">
+                            <?php foreach ($lastUsers as $userIndex => $user) : ?>
+                                <div class="user-card flex-none w-[290px] h-[565px] md:w-[330px] md:h-[615px] bg-cover bg-center" style="background-image: url('<?php echo htmlspecialchars($user->getPhotos()[0]); ?>');">
+                                    <div class="profile-info flex h-full items-end bg-gradient-to-t from-black via-transparent">
+                                        <div class="p-4 text-white">
+                                            <h2 class="text-3xl font-bold"><?php echo htmlspecialchars($user->getFirstName()); ?></h2>
+                                            <div class="text-sm flex gap-2 items-center mb-0 text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                                    <path fill-rule="evenodd" d="M19.952 1.651a.75.75 0 0 1 .298.599V16.303a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.403-4.909l2.311-.66a1.5 1.5 0 0 0 1.088-1.442V6.994l-9 2.572v9.737a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.402-4.909l2.31-.66a1.5 1.5 0 0 0 1.088-1.442V5.25a.75.75 0 0 1 .544-.721l10.5-3a.75.75 0 0 1 .658.122Z" clip-rule="evenodd" />
+                                                </svg>
+                                                <p><?php echo is_array($user->getMusicPreferences()) ? implode(', ', $user->getMusicPreferences()) : htmlspecialchars($user->getMusicPreferences()); ?></p>
                                             </div>
-                                            <div class="w-full border-b border-gray-500"></div>
-                                            <div class="bg-black">
-                                                <div class="p-4 text-white">
-                                                    <p class="text-base italic font-semibold"><?php echo htmlspecialchars($userData[21]); ?></p>
-                                                </div>
-                                                <div class="w-full border-b border-gray-500"></div>
-                                                <div class="p-4 text-white">
-                                                    <h3 class="text-sm uppercase font-semibold mb-4">Additional Information</h3>
-                                                    <p class="text-xs font-semibold">Occupation: <?php echo htmlspecialchars($userData[18] ?? 'N/A'); ?></p>
-                                                    <p class="text-xs font-semibold">Smoking Status: <?php echo htmlspecialchars($userData[19] ?? 'N/A'); ?></p>
-                                                    <p class="text-xs font-semibold">Harmony Score: <?php echo htmlspecialchars($userData[22] ?? 'N/A'); ?></p>
-                                                </div>
+                                            <div class="text-sm flex gap-2 items-center mb-0 text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                                    <path fill-rule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" />
+                                                </svg>
+                                                <p><?php echo htmlspecialchars($user->getCity()); ?></p>
+                                            </div>
+                                            <div class="text-sm flex gap-2 items-center mb-0 text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                                                    <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+                                                </svg>
+                                                <p><?php echo htmlspecialchars($user->getHobbies()); ?></p>
                                             </div>
                                         </div>
-                                    <?php endif; ?>
-                                <?php endfor; ?>
-                            </div>
-                            <div class="flex justify-center p-4 gap-1 absolute top-0 left-0 right-0">
-                                <?php for ($i = 14; $i <= 17; $i++) : ?>
-                                    <?php if (isset($userData[$i]) && !empty($userData[$i])) : ?>
-                                        <div class="w-1/2 h-2.5 bg-gray-500 rounded-full cursor-pointer carousel-indicator" data-slide="<?php echo $i - 14; ?>"></div>
-                                    <?php endif; ?>
-                                <?php endfor; ?>
-                            </div>
+                                    </div>
+                                    <div class="w-full border-b border-gray-500"></div>
+                                    <div class="bg-black">
+                                        <div class="p-4 text-white">
+                                            <p class="text-base italic font-semibold"><?php echo htmlspecialchars($user->getAboutMe()); ?></p>
+                                        </div>
+                                        <div class="w-full border-b border-gray-500"></div>
+                                        <div class="p-4 text-white">
+                                            <h3 class="text-sm uppercase font-semibold mb-4">Additional Information</h3>
+                                            <p class="text-xs font-semibold">Occupation: <?php echo htmlspecialchars($user->getOccupation()); ?></p>
+                                            <p class="text-xs font-semibold">Smoking Status: <?php echo htmlspecialchars($user->getSmokingStatus()); ?></p>
+                                            <p class="text-xs font-semibold">Harmony Score: <?php echo htmlspecialchars($user->getHarmony()); ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
-                    <?php else : ?>
-                        <p>User information not found.</p>
-                    <?php endif; ?>
-                </div>
-                <div class="flex flex-row gap-48 items-center">
-                    <div class="border-2 border-white rounded-full p-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                            <path fill-rule="evenodd" d="M11.03 3.97a.75.75 0 0 1 0 1.06l-6.22 6.22H21a.75.75 0 0 1 0 1.5H4.81l6.22 6.22a.75.75 0 1 1-1.06 1.06l-7.5-7.5a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="border-2 border-white rounded-full p-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                            <path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                        </svg>
                     </div>
                 </div>
-            </div>
+                <div class="flex flex-row gap-24 mx-auto">
+                    <button id="prev" class="border-2 border-white rounded-full p-3 opacity-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:border-gray-700 disabled:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                        </svg>
+                    </button>
+                    <button id="next" class="border-2 border-white rounded-full p-3 opacity-100 disabled:opacity-50 disabled:cursor-not-allowed disabled:border-gray-700 disabled:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+                    </button>
 
+                </div>
         </section>
+
     </main>
+
 </body>
 
 </html>
 <script>
-    const indicators = document.querySelectorAll('.carousel-indicator');
-    indicators.forEach((indicator, i) => {
-        indicator.addEventListener('click', () => {
-            const slides = document.querySelectorAll('#carousel .flex-none');
-            slides.forEach(slide => slide.classList.add('hidden'));
-            slides[i].classList.remove('hidden');
+    document.addEventListener('DOMContentLoaded', function() {
+        const userCards = document.querySelectorAll('.user-card');
+        let currentIndex = 0;
 
-            indicators.forEach(ind => ind.classList.replace('bg-white', 'bg-gray-500'));
-            indicator.classList.replace('bg-gray-500', 'bg-white');
+        const nextButton = document.getElementById('next');
+        const prevButton = document.getElementById('prev');
+
+        function updateButtonStates() {
+            prevButton.disabled = currentIndex === 0;
+            nextButton.disabled = currentIndex === userCards.length - 1;
+        }
+
+        function displayCurrentCard() {
+            userCards.forEach((card, index) => {
+                card.style.display = index === currentIndex ? 'block' : 'none';
+            });
+            updateButtonStates();
+        }
+
+
+        displayCurrentCard();
+
+        nextButton.addEventListener('click', () => {
+            if (currentIndex < userCards.length - 1) {
+                currentIndex++;
+                displayCurrentCard();
+            }
+        });
+
+        prevButton.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                displayCurrentCard();
+            }
         });
     });
-
-    indicators.length > 0 && indicators[0].click();
 </script>
