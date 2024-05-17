@@ -1,30 +1,36 @@
 <?php
 session_start();
 
+// Function to get user data by user ID from a CSV file
 function getUserById($userId, $csvFilePath)
 {
+    // Open the CSV file for reading
     if (($handle = fopen($csvFilePath, "r")) !== FALSE) {
+        // Read each row in the CSV file
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            // Check if the first column (user ID) matches the given user ID
             if ($data[0] == $userId) {
+                // Close the file and return the user data
                 fclose($handle);
                 return $data;
             }
         }
+        // Close the file if no matching user ID is found
         fclose($handle);
     }
+    // Return null if no matching user ID is found or if file cannot be opened
     return null;
 }
 
+// Retrieve user data based on the user ID stored in the session
 $userData = null;
 $userId = $_SESSION['user_id'] ?? null;
 if ($userId) {
     $userData = getUserById($userId, '../data/users.csv');
 } else {
-    echo 'User ID not found in session. ahaha';
+    echo 'User ID not found in session.';
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,13 +38,16 @@ if ($userId) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Importing Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/tailwind.config.js"></script>
 
+    <!-- Set the page title to the username if available -->
     <title><?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : ''; ?></title>
 </head>
 
 <body class="font-montserrat text-white bg-dark_gray">
+    <!-- Header section -->
     <header class="justify-center items-center mx-auto">
         <div class="flex flex-col gap-4 justify-center items-center px-4 py-3 md:px-6 md:py-4 lg:px-8 lg:py-5">
             <div class="flex items-center">
@@ -48,6 +57,7 @@ if ($userId) {
             </div>
             <div class="items-center text-center">
                 <span class="font-bold text-white">
+                    <!-- Display the username from the session if available -->
                     <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : ''; ?>'s Profile
                 </span>
             </div>
@@ -58,12 +68,15 @@ if ($userId) {
     <section class="container mx-auto">
         <div class="flex flex-col gap-10 justify-center items-center min-h-1/2 mt-10">
             <div class="bg-white max-w-md md:max-w-lg rounded-xl overflow-hidden">
+                <!-- Check if user data is available -->
                 <?php if ($userData) : ?>
+                    <!-- Carousel for user photos -->
                     <div id="carousel" class="relative">
                         <div class="flex overflow-x-hidden relative">
+                            <!-- Loop through specific indexes to display user photos -->
                             <?php for ($i = 14; $i <= 17; $i++) : ?>
                                 <?php if (isset($userData[$i]) && !empty($userData[$i])) : ?>
-                                    <div class="flex-none w-[290px] h-[565px]  md:w-[330px] md:h-[615px] bg-cover bg-center" style="background-image: url('<?php echo htmlspecialchars($userData[$i]); ?>');">
+                                    <div class="flex-none w-[290px] h-[565px] md:w-[330px] md:h-[615px] bg-cover bg-center" style="background-image: url('<?php echo htmlspecialchars($userData[$i]); ?>');">
                                         <div class="flex h-full items-end bg-gradient-to-t from-black via-transparent">
                                             <div class="p-4 text-white">
                                                 <h2 class="text-3xl font-bold"><?php echo htmlspecialchars($userData[6]); ?></h2>
@@ -105,6 +118,7 @@ if ($userId) {
                             <?php endfor; ?>
                         </div>
                         <div class="flex justify-center p-4 gap-1 absolute top-0 left-0 right-0">
+                            <!-- Carousel indicators -->
                             <?php for ($i = 14; $i <= 17; $i++) : ?>
                                 <?php if (isset($userData[$i]) && !empty($userData[$i])) : ?>
                                     <div class="w-1/2 h-2.5 bg-gray-500 rounded-full cursor-pointer carousel-indicator" data-slide="<?php echo $i - 14; ?>"></div>
@@ -113,30 +127,32 @@ if ($userId) {
                         </div>
                     </div>
                 <?php else : ?>
+                    <!-- Output message if user data is not found -->
                     <p>User information not found.</p>
                 <?php endif; ?>
             </div>
             <div class="flex flex-row gap-12 mt-14 w-full justify-center items-center mb-12">
+                <!-- Link to profile update page -->
                 <a href="/src/pages/profileUpdate.php" class="flex flex-row gap-4 font-bold text-gray-400 px-4 py-2 rounded-xl border-[2px] border-gray-400 items-center">
                     <span>Edit Profile</span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                         <path fill-rule="evenodd" d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
                     </svg>
                 </a>
-                <a href="/src/pages/app.php" class="flex flex-row gap-4 font-bold text-white px-4 py-2 rounded-xl border-[2px] border-white items-center">
+                <!-- Link to logout page -->
+                <a href="/src/security/logout.php" class="flex flex-row gap-4 font-bold text-white px-4 py-2 rounded-xl border-[2px] border-white items-center">
                     <span class="text-transparent bg-clip-text bg-gradient-to-b from-sky_primary to-rose_primary">Continue</span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                         <path fill-rule="evenodd" d="M12.97 3.97a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 1 1-1.06-1.06l6.22-6.22H3a.75.75 0 0 1 0-1.5h16.19l-6.22-6.22a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                     </svg>
                 </a>
-
             </div>
         </div>
-
     </section>
 </body>
 
 <script>
+    // Carousel functionality for indicators
     const indicators = document.querySelectorAll('.carousel-indicator');
     indicators.forEach((indicator, i) => {
         indicator.addEventListener('click', () => {
@@ -149,6 +165,7 @@ if ($userId) {
         });
     });
 
+    // Auto click the first indicator on load
     indicators.length > 0 && indicators[0].click();
 </script>
 
