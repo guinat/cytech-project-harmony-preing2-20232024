@@ -20,8 +20,11 @@ class UserEntity
     private $smokingStatus;
     private $hobbies;
     private $aboutMe;
-    private $harmony;
+    private $subscription;
+    private $subscriptionStartDate;
+    private $subscriptionEndDate;
 
+    // Constructor
     public function __construct($id, $username, $password)
     {
         $this->id = $id;
@@ -42,7 +45,9 @@ class UserEntity
         $this->smokingStatus = '';
         $this->hobbies = '';
         $this->aboutMe = '';
-        $this->harmony = '';
+        $this->subscription = '';
+        $this->subscriptionStartDate = null;
+        $this->subscriptionEndDate = null;
     }
 
     // Getters
@@ -50,95 +55,85 @@ class UserEntity
     {
         return $this->id;
     }
-
     public function getCreatedAt()
     {
         return $this->created_at;
     }
-
     public function getUpdatedAt()
     {
         return $this->updated_at;
     }
-
     public function getUsername()
     {
         return $this->username;
     }
-
     public function getPassword()
     {
         return $this->password;
     }
-
     public function getFirstName()
     {
         return $this->firstName;
     }
-
     public function getLastName()
     {
         return $this->lastName;
     }
-
     public function getGender()
     {
         return $this->gender;
     }
-
     public function getDateOfBirth()
     {
         return $this->dateOfBirth;
     }
-
     public function getCountry()
     {
         return $this->country;
     }
-
     public function getCity()
     {
         return $this->city;
     }
-
     public function getLookingFor()
     {
         return $this->lookingFor;
     }
-
     public function getMusicPreferences()
     {
         return $this->musicPreferences;
     }
-
     public function getPhotos()
     {
         return $this->photos;
     }
-
     public function getOccupation()
     {
         return $this->occupation;
     }
-
     public function getSmokingStatus()
     {
         return $this->smokingStatus;
     }
-
     public function getHobbies()
     {
         return $this->hobbies;
     }
-
     public function getAboutMe()
     {
         return $this->aboutMe;
     }
-
-    public function getHarmony()
+    public function getSubscription()
     {
-        return $this->harmony;
+        return $this->subscription;
+    }
+    public function getSubscriptionStartDate()
+    {
+        return $this->subscriptionStartDate;
+    }
+    public function getSubscriptionEndDate()
+    {
+        return $this->subscriptionEndDate;
     }
 
     // Setters
@@ -220,7 +215,7 @@ class UserEntity
     public function setMusicPreferences($musicPreferences)
     {
         if (!is_string($musicPreferences) || empty($musicPreferences)) {
-            throw new Exception("Musics & ... should be a string.");
+            throw new Exception("Music preferences should be a string.");
         }
         $this->musicPreferences = $musicPreferences;
     }
@@ -233,7 +228,6 @@ class UserEntity
         $this->photos = $photos;
     }
 
-
     public function setOccupation($occupation)
     {
         if (!is_string($occupation)) {
@@ -244,7 +238,6 @@ class UserEntity
 
     public function setSmokingStatus($smokingStatus)
     {
-
         $this->smokingStatus = $smokingStatus;
     }
 
@@ -264,6 +257,21 @@ class UserEntity
         $this->aboutMe = $aboutMe;
     }
 
+    public function setSubscription($subscription)
+    {
+        $this->subscription = $subscription;
+    }
+
+    public function setSubscriptionStartDate($subscriptionStartDate)
+    {
+        $this->subscriptionStartDate = $subscriptionStartDate;
+    }
+
+    public function setSubscriptionEndDate($subscriptionEndDate)
+    {
+        $this->subscriptionEndDate = $subscriptionEndDate;
+    }
+
     // Validators
     private function validatePassword($password)
     {
@@ -280,7 +288,7 @@ class UserEntity
             throw new Exception("First Name must be a non-empty string.");
         }
         if (strlen($field) > 255) {
-            throw new Exception("First Name be longer than 255 characters.");
+            throw new Exception("First Name cannot be longer than 255 characters.");
         }
         if (preg_match('/\d/', $field)) {
             throw new Exception("First Name cannot contain numbers.");
@@ -293,7 +301,7 @@ class UserEntity
             throw new Exception("Last Name must be a non-empty string.");
         }
         if (strlen($field) > 255) {
-            throw new Exception("Last Name be longer than 255 characters.");
+            throw new Exception("Last Name cannot be longer than 255 characters.");
         }
         if (preg_match('/\d/', $field)) {
             throw new Exception("Last Name cannot contain numbers.");
@@ -318,11 +326,12 @@ class UserEntity
     }
 }
 
+// Function to check if a username exists in the CSV file
 function usernameExists($username, $csvFile)
 {
     if (($handle = fopen($csvFile, 'r')) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            if ($data[1] == $username) {
+            if ($data[3] == $username) { // Assuming username is at index 3
                 fclose($handle);
                 return true;
             }
@@ -332,18 +341,20 @@ function usernameExists($username, $csvFile)
     return false;
 }
 
+// Function to get the last user ID in the CSV file
 function getLastUserId($csvFile)
 {
     $lastId = 0;
     if (($handle = fopen($csvFile, 'r')) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            $lastId = (int)$data[0];
+            $lastId = (int)$data[0]; // Assuming user ID is at index 0
         }
         fclose($handle);
     }
     return $lastId;
 }
 
+// Function to create a new user
 function createUser($username, $password)
 {
     $csvFile = '../data/users.csv';
@@ -354,12 +365,7 @@ function createUser($username, $password)
 
     $lastId = getLastUserId($csvFile) + 1;
 
-    $user = new UserEntity(
-        $lastId,
-        $username,
-        $password,
-    );
-
+    $user = new UserEntity($lastId, $username, $password);
     $user->setUpdatedAt(date('Y-m-d H:i:s'));
 
     if (($handle = fopen($csvFile, 'a')) !== FALSE) {
@@ -369,6 +375,22 @@ function createUser($username, $password)
             $user->getUpdatedAt(),
             $user->getUsername(),
             $user->getPassword(),
+            $user->getFirstName(),
+            $user->getLastName(),
+            $user->getGender(),
+            $user->getDateOfBirth(),
+            $user->getCountry(),
+            $user->getCity(),
+            $user->getLookingFor(),
+            $user->getMusicPreferences(),
+            implode('|', $user->getPhotos()),
+            $user->getOccupation(),
+            $user->getSmokingStatus(),
+            $user->getHobbies(),
+            $user->getAboutMe(),
+            $user->getSubscription(),
+            $user->getSubscriptionStartDate(),
+            $user->getSubscriptionEndDate(),
         ];
 
         fputcsv($handle, $csvRow);
@@ -380,6 +402,7 @@ function createUser($username, $password)
     return null;
 }
 
+// Function to update a user profile
 function updateUserProfile($userId, $dataToUpdate, $csvFile)
 {
     $tempFile = tempnam(sys_get_temp_dir(), 'CSV');
@@ -409,17 +432,52 @@ function updateUserProfile($userId, $dataToUpdate, $csvFile)
     return $dataUpdated;
 }
 
+// Function to get a user by ID
 function getUserById($userId, $csvFile)
 {
     if (($handle = fopen($csvFile, 'r')) !== FALSE) {
-        $header = fgetcsv($handle);
+        $header = fgetcsv($handle); // Skip header row
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
             if ($data[0] == $userId) {
                 $user = new UserEntity(
-                    $data[0],
-                    $data[3],
-                    $data[4]
+                    $data[0], // User ID
+                    $data[3], // Username
+                    $data[4]  // Password
                 );
+                fclose($handle);
+                return $user;
+            }
+        }
+        fclose($handle);
+    }
+    return null;
+}
+
+
+// Function to get a user by ID with all profile details
+function getUser($userId, $csvFilePath)
+{
+    if (($handle = fopen($csvFilePath, 'r')) !== FALSE) {
+        fgetcsv($handle); // Skip header row
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            if ($data[0] == $userId) {
+                $user = new UserEntity($data[0], $data[3], $data[4]);
+                if (isset($data[6])) $user->setFirstName($data[6]);
+                if (isset($data[7])) $user->setLastName($data[7]);
+                if (isset($data[8])) $user->setGender($data[8]);
+                if (isset($data[9])) $user->setDateOfBirth($data[9]);
+                if (isset($data[10])) $user->setCountry($data[10]);
+                if (isset($data[11])) $user->setCity($data[11]);
+                if (isset($data[12])) $user->setLookingFor($data[12]);
+                if (isset($data[13])) $user->setMusicPreferences($data[13]);
+                if (isset($data[14])) $user->setPhotos(array_slice($data, 14, 4));
+                if (isset($data[18])) $user->setOccupation($data[18]);
+                if (isset($data[19])) $user->setSmokingStatus($data[19]);
+                if (isset($data[20])) $user->setHobbies($data[20]);
+                if (isset($data[21])) $user->setAboutMe($data[21]);
+                if (isset($data[22])) $user->setSubscription($data[22]);
+                if (isset($data[23])) $user->setSubscriptionStartDate($data[23]);
+                if (isset($data[24])) $user->setSubscriptionEndDate($data[24]);
                 fclose($handle);
                 return $user;
             }

@@ -1,1 +1,1 @@
-id,created_at,updated_at,username,password,role,first_name,last_name,gender,date_of_birth,country,city,looking_for,music_preferences,require_photo_1,require_photo_2,additional_photo_1,additional_photo_2,occupation,smoking_status,hobbies,about_me,hrmy1
+id,created_at,updated_at,username,password,role,first_name,last_name,gender,date_of_birth,country,city,looking_for,music_preferences,require_photo_1,require_photo_2,additional_photo_1,additional_photo_2,occupation,smoking_status,hobbies,about_me,subscription,subscription_start_date,subscription_end_date
