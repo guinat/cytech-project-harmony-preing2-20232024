@@ -139,9 +139,12 @@ function getMutualLikes($userId)
 {
     $mutualLikes = [];
     $likesFile = '../data/profile_likes.csv';
+    $matchesFile = '../data/matches.csv';
     $userLikes = [];
     $likedByUsers = [];
+    $currentDateTime = date('Y-m-d H:i:s');
 
+    // Ouvrir le fichier des likes
     if (file_exists($likesFile) && ($handle = fopen($likesFile, 'r')) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
             if ($data[0] == $userId) {
@@ -154,15 +157,27 @@ function getMutualLikes($userId)
         fclose($handle);
     }
 
-    // Find mutual likes
+    // Ouvrir le fichier des matchs en mode ajout
+    $matchesHandle = fopen($matchesFile, 'a');
+    if ($matchesHandle === FALSE) {
+        error_log('Failed to open matches file for appending: ' . $matchesFile);
+        return $mutualLikes; // Retourner les likes mutuels même si l'écriture échoue
+    }
+
+    // Trouver les likes mutuels et écrire les matchs dans le fichier CSV
     foreach ($userLikes as $likedUserId) {
         if (in_array($likedUserId, $likedByUsers)) {
             $mutualLikes[] = $likedUserId;
+            // Écrire le match dans le fichier CSV
+            fputcsv($matchesHandle, [$userId, $likedUserId, $currentDateTime]);
         }
     }
 
+    fclose($matchesHandle);
+
     return $mutualLikes;
 }
+
 
 $currentUserId = $_SESSION['user_id'] ?? null; // Get the current user ID from the session
 $lastUsers = getUsersFromCSV('../data/users.csv', $currentUserId); // Get the latest users excluding the current user
@@ -386,8 +401,8 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
         <!-- Report User Modal -->
         <div id="report-user-modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
             <div class="bg-white p-6 rounded-lg max-w-md w-full">
-                <h2 class="text-xl font-bold mb-4">Signaler le profil</h2>
-                <p class="mb-4">Êtes-vous sûr de vouloir signaler ce profil?</p>
+                <h2 id="modal-title" class="text-xl font-bold mb-4">Signaler le profil</h2>
+                <p id="modal-content" class="mb-4">Êtes-vous sûr de vouloir signaler ce profil?</p>
                 <label for="report-reason" class="block mb-2">Raison:</label>
                 <select id="report-reason" class="w-full mb-4 p-2 border rounded">
                     <option value="harassment">Harcèlement</option>
@@ -403,12 +418,11 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             </div>
         </div>
 
-
         <!-- Block User Modal -->
         <div id="block-user-modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
             <div class="bg-white p-6 rounded-lg max-w-md w-full">
-                <h2 class="text-xl font-bold mb-4">Block User</h2>
-                <p class="mb-4">Are you sure you want to block this user?</p>
+                <h2 id="modal-title" class="text-xl font-bold mb-4">Block User</h2>
+                <p id="modal-content" class="mb-4">Are you sure you want to block this user?</p>
                 <label for="block-reason" class="block mb-2">Reason:</label>
                 <select id="block-reason" class="w-full mb-4 p-2 border rounded">
                     <option value="spam">Spam</option>
@@ -424,161 +438,215 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             </div>
         </div>
 
+
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded');
 
-            const matchesTab = document.getElementById('matchs-tab');
-            const messagesTab = document.getElementById('messages-tab');
-            const matchesContent = document.getElementById('matchs-content');
-            const recentConversationsContent = document.getElementById('recent-conversations-content');
-            const mainContent = document.getElementById('main-content');
-            const conversationsContent = document.getElementById('conversations-content');
-            const closeConversationButton = document.getElementById('close-conversation');
-            const reportButton = document.getElementById('report-profile');
-            const blockButton = document.getElementById('block-profile');
-            const actionModal = document.getElementById('action-modal');
-            const modalTitle = document.getElementById('modal-title');
-            const modalContent = document.getElementById('modal-content');
-            const cancelActionButton = document.getElementById('cancel-action');
-            const confirmActionButton = document.getElementById('confirm-action');
 
-            let conversationRefreshInterval;
-            let currentAction;
-            let currentUserId;
-            let currentConversationId;
+</body>
 
-            matchesTab.addEventListener('click', function() {
-                console.log('Matches tab clicked');
-                matchesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
-                messagesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
-                matchesContent.classList.remove('hidden');
-                recentConversationsContent.classList.add('hidden');
-                mainContent.style.display = 'block';
-                conversationsContent.style.display = 'none'; // Masquer le contenu de la conversation
-                clearInterval(conversationRefreshInterval); // Arrêter le rafraîchissement de la conversation
-                loadMatches();
-            });
+</html>
 
-            function loadMatches() {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', '../action/get_matches.php', true);
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        try {
-                            const matches = JSON.parse(xhr.responseText);
-                            console.log('Matches loaded:', matches);
-                            matchesContent.innerHTML = '';
-                            matches.forEach(match => {
-                                const matchElement = document.createElement('a');
-                                matchElement.href = '#';
-                                matchElement.className = 'matched-profile w-24 h-24 bg-cover bg-center rounded-xl';
-                                matchElement.style.backgroundImage = `url('${match.photos[0]}')`;
-                                matchElement.dataset.userId = match.id;
-                                matchesContent.appendChild(matchElement);
-                            });
-                            addMatchClickListeners();
-                        } catch (error) {
-                            console.error('Failed to parse JSON:', error);
-                            console.error('Response:', xhr.responseText);
-                        }
-                    } else {
-                        console.error('Failed to load matches:', xhr.statusText);
-                    }
-                };
-                xhr.onerror = function() {
-                    console.error('Request failed');
-                };
-                xhr.send();
-            }
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page loaded');
 
-            function addMatchClickListeners() {
-                document.querySelectorAll('.matched-profile').forEach(profile => {
-                    profile.addEventListener('click', function(event) {
-                        event.preventDefault();
-                        const userId = this.dataset.userId;
-                        currentUserId = userId;
-                        console.log('Matched profile clicked, User ID:', userId);
-                        startConversation(userId);
-                    });
-                });
-            }
+        const matchesTab = document.getElementById('matchs-tab');
+        const messagesTab = document.getElementById('messages-tab');
+        const matchesContent = document.getElementById('matchs-content');
+        const recentConversationsContent = document.getElementById('recent-conversations-content');
+        const mainContent = document.getElementById('main-content');
+        const conversationsContent = document.getElementById('conversations-content');
+        const closeConversationButton = document.getElementById('close-conversation');
+        const reportButton = document.getElementById('report-profile');
+        const blockButton = document.getElementById('block-profile');
 
+        const reportModal = document.getElementById('report-user-modal');
+        const blockModal = document.getElementById('block-user-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const cancelActionButton = document.getElementById('cancel-block-user');
+        const confirmActionButton = document.getElementById('confirm-block-user');
+
+        let conversationRefreshInterval;
+        let currentAction;
+        let currentUserId;
+        let currentConversationId;
+
+        matchesTab.addEventListener('click', function() {
+            console.log('Matches tab clicked');
+            matchesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
+            messagesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
+            matchesContent.classList.remove('hidden');
+            recentConversationsContent.classList.add('hidden');
+            mainContent.style.display = 'block';
+            conversationsContent.style.display = 'none'; // Masquer le contenu de la conversation
+            clearInterval(conversationRefreshInterval); // Arrêter le rafraîchissement de la conversation
             loadMatches();
+        });
 
-            messagesTab.addEventListener('click', function() {
-                console.log('Messages tab clicked');
-                messagesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
-                matchesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
-                matchesContent.classList.add('hidden');
-                recentConversationsContent.classList.remove('hidden');
-                mainContent.style.display = 'block';
-                conversationsContent.style.display = 'none';
-                clearInterval(conversationRefreshInterval); // Arrêter le rafraîchissement de la conversation
-            });
-
-            closeConversationButton.addEventListener('click', function() {
-                console.log('Close conversation clicked');
-                mainContent.style.display = 'block';
-                conversationsContent.style.display = 'none';
-                clearInterval(conversationRefreshInterval);
-            });
-
-            reportButton.addEventListener('click', function() {
-                const reportModal = document.getElementById('report-user-modal');
-                const reportReasonSelect = document.getElementById('report-reason');
-                const otherReportReasonInput = document.getElementById('other-report-reason');
-
-                reportReasonSelect.value = 'harassment';
-                otherReportReasonInput.classList.add('hidden');
-                reportModal.classList.remove('hidden');
-
-                reportReasonSelect.addEventListener('change', function() {
-                    if (this.value === 'other') {
-                        otherReportReasonInput.classList.remove('hidden');
-                    } else {
-                        otherReportReasonInput.classList.add('hidden');
+        function loadMatches() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '../action/get_matches.php', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    try {
+                        const matches = JSON.parse(xhr.responseText);
+                        console.log('Matches loaded:', matches);
+                        matchesContent.innerHTML = '';
+                        matches.forEach(match => {
+                            const matchElement = document.createElement('a');
+                            matchElement.href = '#';
+                            matchElement.className = 'matched-profile w-24 h-24 bg-cover bg-center rounded-xl';
+                            matchElement.style.backgroundImage = `url('${match.photos[0]}')`;
+                            matchElement.dataset.userId = match.id;
+                            matchesContent.appendChild(matchElement);
+                        });
+                        addMatchClickListeners();
+                    } catch (error) {
+                        console.error('Failed to parse JSON:', error);
+                        console.error('Response:', xhr.responseText);
                     }
-                });
+                } else {
+                    console.error('Failed to load matches:', xhr.statusText);
+                }
+            };
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+            xhr.send();
+        }
 
-                const confirmReportButton = document.getElementById('confirm-report-user');
-                confirmReportButton.addEventListener('click', function() {
-                    const reason = reportReasonSelect.value === 'other' ? otherReportReasonInput.value : reportReasonSelect.value;
-
-                    reportProfile(currentUserId, reason);
-                    reportModal.classList.add('hidden');
-                });
-
-                const cancelReportButton = document.getElementById('cancel-report-user');
-                cancelReportButton.addEventListener('click', function() {
-                    reportModal.classList.add('hidden');
+        function addMatchClickListeners() {
+            document.querySelectorAll('.matched-profile').forEach(profile => {
+                profile.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const userId = this.dataset.userId;
+                    currentUserId = userId;
+                    console.log('Matched profile clicked, User ID:', userId);
+                    startConversation(userId);
                 });
             });
+        }
 
-            function reportProfile(userId, reason) {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '../action/report_profile.php', true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        console.log('Profile reported:', userId);
-                        location.reload();
-                    } else {
-                        console.error('Error reporting profile:', xhr.statusText, xhr.responseText);
+        loadMatches();
+
+        messagesTab.addEventListener('click', function() {
+            console.log('Messages tab clicked');
+            messagesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
+            matchesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
+            matchesContent.classList.add('hidden');
+            recentConversationsContent.classList.remove('hidden');
+            mainContent.style.display = 'block';
+            conversationsContent.style.display = 'none';
+            clearInterval(conversationRefreshInterval); // Arrêter le rafraîchissement de la conversation
+            updateConversationsList();
+        });
+
+        function updateConversationsList() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '../action/get_conversations.php', true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    try {
+                        const conversations = JSON.parse(xhr.responseText);
+                        console.log('Conversations loaded:', conversations);
+                        recentConversationsContent.innerHTML = '';
+                        conversations.forEach(conversation => {
+                            const conversationElement = document.createElement('div');
+                            conversationElement.className = 'conversation p-4 bg-black rounded shadow cursor-pointer';
+                            conversationElement.dataset.conversationId = conversation.id;
+                            conversationElement.dataset.userId = conversation.userId;
+                            conversationElement.innerText = `Conversation with ${conversation.userName}`;
+                            recentConversationsContent.appendChild(conversationElement);
+                        });
+                        addConversationClickListeners();
+                    } catch (error) {
+                        console.error('Failed to parse JSON:', error);
+                        console.error('Response:', xhr.responseText);
                     }
-                };
-                xhr.onerror = function() {
-                    console.error('Request failed');
-                };
-                xhr.send('user_id=' + userId + '&reason=' + encodeURIComponent(reason));
-            }
+                } else {
+                    console.error('Failed to load conversations:', xhr.statusText);
+                }
+            };
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+            xhr.send();
+        }
 
-            blockButton.addEventListener('click', function() {
-                currentAction = 'block';
-                modalTitle.textContent = 'Bloquer le profil';
-                modalContent.innerHTML = `
+        function addConversationClickListeners() {
+            document.querySelectorAll('.conversation').forEach(conversation => {
+                conversation.addEventListener('click', function() {
+                    const conversationId = this.dataset.conversationId;
+                    const userId = this.dataset.userId;
+                    currentUserId = userId;
+                    currentConversationId = conversationId;
+                    console.log('Conversation clicked, ID:', conversationId);
+                    loadConversation(conversationId);
+                });
+            });
+        }
+
+        closeConversationButton.addEventListener('click', function() {
+            console.log('Close conversation clicked');
+            mainContent.style.display = 'block';
+            conversationsContent.style.display = 'none';
+            clearInterval(conversationRefreshInterval);
+        });
+
+        reportButton.addEventListener('click', function() {
+            const reportReasonSelect = document.getElementById('report-reason');
+            const otherReportReasonInput = document.getElementById('other-report-reason');
+
+            reportReasonSelect.value = 'harassment';
+            otherReportReasonInput.classList.add('hidden');
+            reportModal.classList.remove('hidden');
+
+            reportReasonSelect.addEventListener('change', function() {
+                if (this.value === 'other') {
+                    otherReportReasonInput.classList.remove('hidden');
+                } else {
+                    otherReportReasonInput.classList.add('hidden');
+                }
+            });
+
+            const confirmReportButton = document.getElementById('confirm-report-user');
+            confirmReportButton.addEventListener('click', function() {
+                const reason = reportReasonSelect.value === 'other' ? otherReportReasonInput.value : reportReasonSelect.value;
+
+                reportProfile(currentUserId, reason);
+                reportModal.classList.add('hidden');
+            });
+
+            const cancelReportButton = document.getElementById('cancel-report-user');
+            cancelReportButton.addEventListener('click', function() {
+                reportModal.classList.add('hidden');
+            });
+        });
+
+        function reportProfile(userId, reason) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../action/report_profile.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log('Profile reported:', userId);
+                    location.reload();
+                } else {
+                    console.error('Error reporting profile:', xhr.statusText, xhr.responseText);
+                }
+            };
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+            xhr.send('user_id=' + userId + '&reason=' + encodeURIComponent(reason));
+        }
+
+        blockButton.addEventListener('click', function() {
+            currentAction = 'block';
+            modalTitle.textContent = 'Bloquer le profil';
+            modalContent.innerHTML = `
             <p>Êtes-vous sûr de vouloir bloquer ce profil ?</p>
             <select id="block-reason" class="w-full p-2 border rounded">
                 <option value="harassment">Harcèlement</option>
@@ -588,107 +656,122 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             </select>
             <input type="text" id="other-reason" class="w-full p-2 border rounded hidden" placeholder="Votre raison">
         `;
-                actionModal.classList.remove('hidden');
+            blockModal.classList.remove('hidden');
 
-                const blockReasonSelect = document.getElementById('block-reason');
-                const otherReasonInput = document.getElementById('other-reason');
+            const blockReasonSelect = document.getElementById('block-reason');
+            const otherReasonInput = document.getElementById('other-reason');
 
-                blockReasonSelect.addEventListener('change', function() {
-                    if (this.value === 'other') {
-                        otherReasonInput.classList.remove('hidden');
-                    } else {
-                        otherReasonInput.classList.add('hidden');
-                    }
-                });
-            });
-
-            document.querySelectorAll('.conversation').forEach(conversation => {
-                conversation.addEventListener('click', function() {
-                    const conversationId = this.getAttribute('data-conversation-id');
-                    const userId = this.getAttribute('data-user-id');
-                    currentUserId = userId;
-                    currentConversationId = conversationId;
-                    console.log('Conversation clicked, ID:', conversationId);
-                    loadConversation(conversationId);
-                });
-            });
-
-            document.querySelectorAll('.liked-profile').forEach(profile => {
-                profile.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const userId = this.getAttribute('data-user-id');
-                    currentUserId = userId;
-                    console.log('Liked profile clicked, User ID:', userId);
-                    startConversation(userId);
-                });
-            });
-
-            function startConversation(userId) {
-                console.log('Starting conversation with user ID:', userId);
-                messagesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
-                matchesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
-                matchesContent.classList.add('hidden');
-                recentConversationsContent.classList.remove('hidden');
-
-                let conversationId = null;
-                document.querySelectorAll('.conversation').forEach(conversation => {
-                    if (conversation.getAttribute('data-user-id') == userId) {
-                        conversationId = conversation.getAttribute('data-conversation-id');
-                    }
-                });
-
-                if (conversationId) {
-                    console.log('Existing conversation found, ID:', conversationId);
-                    loadConversation(conversationId);
+            blockReasonSelect.addEventListener('change', function() {
+                if (this.value === 'other') {
+                    otherReasonInput.classList.remove('hidden');
                 } else {
-                    console.log('No existing conversation, creating new');
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', '../action/start_conversation.php', true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                    xhr.onload = function() {
-                        console.log('start_conversation response status:', xhr.status);
-                        if (xhr.status === 200) {
-                            try {
-                                const response = JSON.parse(xhr.responseText);
-                                console.log('Parsed response:', response);
-                                loadConversation(response.conversation_id);
-                                currentConversationId = response.conversation_id;
-                            } catch (e) {
-                                console.error('Error parsing JSON:', e, xhr.responseText);
-                            }
-                        } else {
-                            console.error('Error:', xhr.statusText);
-                        }
-                    };
-                    xhr.onerror = function() {
-                        console.error('Request failed');
-                    };
-                    xhr.send('user_id=' + userId);
+                    otherReasonInput.classList.add('hidden');
                 }
-            }
+            });
 
-            function loadConversation(conversationId) {
-                console.log('Loading conversation ID:', conversationId);
-                mainContent.style.display = 'none';
-                conversationsContent.style.display = 'block';
-                recentConversationsContent.classList.remove('hidden');
+            const confirmBlockButton = document.getElementById('confirm-block-user');
+            confirmBlockButton.addEventListener('click', function() {
+                const reason = blockReasonSelect.value === 'other' ? otherReasonInput.value : blockReasonSelect.value;
+                blockProfile(currentUserId, currentConversationId, reason);
+                blockModal.classList.add('hidden');
+            });
 
+            const cancelBlockButton = document.getElementById('cancel-block-user');
+            cancelBlockButton.addEventListener('click', function() {
+                blockModal.classList.add('hidden');
+            });
+        });
+
+        function blockProfile(userId, conversationId, reason) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../action/block_profile.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log('Profile blocked:', userId);
+                    mainContent.style.display = 'block';
+                    conversationsContent.style.display = 'none';
+                    location.reload();
+                } else {
+                    console.error('Error blocking profile:', xhr.statusText, xhr.responseText);
+                }
+            };
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+            xhr.send('user_id=' + userId + '&conversation_id=' + conversationId + '&reason=' + encodeURIComponent(reason));
+        }
+
+
+        function startConversation(userId) {
+            console.log('Starting conversation with user ID:', userId);
+            messagesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
+            matchesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
+            matchesContent.classList.add('hidden');
+            recentConversationsContent.classList.remove('hidden');
+            mainContent.style.display = 'none';
+            conversationsContent.style.display = 'block';
+
+            let conversationId = null;
+            document.querySelectorAll('.conversation').forEach(conversation => {
+                if (conversation.getAttribute('data-user-id') == userId) {
+                    conversationId = conversation.getAttribute('data-conversation-id');
+                }
+            });
+
+            if (conversationId) {
+                console.log('Existing conversation found, ID:', conversationId);
+                loadConversation(conversationId);
+            } else {
+                console.log('No existing conversation, creating new');
                 const xhr = new XMLHttpRequest();
-                xhr.open('GET', '../action/get_messages.php?conversation_id=' + conversationId, true);
+                xhr.open('POST', '../action/start_conversation.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onload = function() {
-                    console.log('get_messages response status:', xhr.status);
+                    console.log('start_conversation response status:', xhr.status);
                     if (xhr.status === 200) {
                         try {
-                            const messages = JSON.parse(xhr.responseText);
-                            console.log('Parsed messages:', messages);
-                            const messagesList = document.getElementById('messages-list');
-                            messagesList.innerHTML = '';
-                            messages.forEach(message => {
-                                const messageElement = document.createElement('div');
-                                messageElement.classList.add('flex', 'items-end', 'space-y-4');
-                                if (message.sender_id == <?php echo json_encode($currentUserId); ?>) {
-                                    messageElement.classList.add('justify-end');
-                                    messageElement.innerHTML = `
+                            const response = JSON.parse(xhr.responseText);
+                            console.log('Parsed response:', response);
+                            loadConversation(response.conversation_id);
+                            currentConversationId = response.conversation_id;
+                            updateConversationsList(); // Add this line
+                        } catch (e) {
+                            console.error('Error parsing JSON:', e, xhr.responseText);
+                        }
+                    } else {
+                        console.error('Error:', xhr.statusText);
+                    }
+                };
+                xhr.onerror = function() {
+                    console.error('Request failed');
+                };
+                xhr.send('user_id=' + userId);
+            }
+        }
+
+        function loadConversation(conversationId) {
+            console.log('Loading conversation ID:', conversationId);
+            mainContent.style.display = 'none';
+            conversationsContent.style.display = 'block';
+            recentConversationsContent.classList.remove('hidden');
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '../action/get_messages.php?conversation_id=' + conversationId, true);
+            xhr.onload = function() {
+                console.log('get_messages response status:', xhr.status);
+                if (xhr.status === 200) {
+                    try {
+                        const messages = JSON.parse(xhr.responseText);
+                        console.log('Parsed messages:', messages);
+                        const messagesList = document.getElementById('messages-list');
+                        messagesList.innerHTML = '';
+                        messages.forEach(message => {
+                            const messageElement = document.createElement('div');
+                            messageElement.classList.add('flex', 'items-end', 'space-y-4');
+                            if (message.sender_id == <?php echo json_encode($currentUserId); ?>) {
+                                messageElement.classList.add('justify-end');
+                                messageElement.innerHTML = `
                                 <div class="relative bg-blue-500 text-white p-2 rounded-lg max-w-xs">
                                     <p>${message.message_text}</p>
                                     <small class="text-xs">${message.timestamp}</small>
@@ -697,207 +780,183 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
                                     </button>
                                 </div>
                             `;
-                                } else {
-                                    messageElement.classList.add('justify-start');
-                                    messageElement.innerHTML = `
+                            } else {
+                                messageElement.classList.add('justify-start');
+                                messageElement.innerHTML = `
                                 <div class="bg-gray-300 text-black p-2 rounded-lg max-w-xs">
                                     <p>${message.message_text}</p>
                                     <small class="text-xs">${message.timestamp}</small>
                                 </div>
                             `;
-                                }
-                                messagesList.appendChild(messageElement);
-                            });
-                            document.querySelectorAll('.conversation').forEach(conversation => {
-                                conversation.classList.remove('active');
-                            });
-                            const activeConversation = document.querySelector(`.conversation[data-conversation-id="${conversationId}"]`);
-                            if (activeConversation) {
-                                activeConversation.classList.add('active');
                             }
-                            addDeleteMessageListeners();
-                        } catch (e) {
-                            console.error('Error parsing JSON:', e, xhr.responseText);
+                            messagesList.appendChild(messageElement);
+                        });
+                        document.querySelectorAll('.conversation').forEach(conversation => {
+                            conversation.classList.remove('active');
+                        });
+                        const activeConversation = document.querySelector(`.conversation[data-conversation-id="${conversationId}"]`);
+                        if (activeConversation) {
+                            activeConversation.classList.add('active');
                         }
-                    } else {
-                        console.error('Error:', xhr.statusText, xhr.responseText);
+                        addDeleteMessageListeners();
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e, xhr.responseText);
                     }
-                };
-                xhr.onerror = function() {
-                    console.error('Request failed');
-                };
-                xhr.send();
+                } else {
+                    console.error('Error:', xhr.statusText, xhr.responseText);
+                }
+            };
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+            xhr.send();
 
-                clearInterval(conversationRefreshInterval);
-                conversationRefreshInterval = setInterval(function() {
+            clearInterval(conversationRefreshInterval);
+            conversationRefreshInterval = setInterval(function() {
+                const activeConversation = document.querySelector('.conversation.active');
+                if (activeConversation) {
+                    loadConversation(conversationId);
+                }
+            }, 5000);
+        }
+
+        function addDeleteMessageListeners() {
+            document.querySelectorAll('.delete-message').forEach(button => {
+                button.addEventListener('click', function() {
+                    const messageId = this.getAttribute('data-message-id');
+                    console.log('Delete message clicked, ID:', messageId);
+                    deleteMessage(messageId);
+                });
+            });
+        }
+
+        function deleteMessage(messageId) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../action/delete_message.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    console.log('Message deleted:', messageId);
                     const activeConversation = document.querySelector('.conversation.active');
                     if (activeConversation) {
-                        loadConversation(conversationId);
+                        loadConversation(activeConversation.getAttribute('data-conversation-id'));
                     }
-                }, 5000);
+                } else {
+                    console.error('Error deleting message:', xhr.statusText, xhr.responseText);
+                }
+            };
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+            xhr.send('message_id=' + messageId);
+        }
+
+        document.getElementById('message-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            console.log('Message form submitted, message:', message);
+
+            if (message.trim() === '') return;
+
+            const activeConversation = document.querySelector('.conversation.active');
+            const conversationId = activeConversation ? activeConversation.getAttribute('data-conversation-id') : currentConversationId;
+
+            if (!conversationId) {
+                console.error('No active conversation found.');
+                return;
             }
 
-            function addDeleteMessageListeners() {
-                document.querySelectorAll('.delete-message').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const messageId = this.getAttribute('data-message-id');
-                        console.log('Delete message clicked, ID:', messageId);
-                        deleteMessage(messageId);
-                    });
-                });
-            }
-
-            function deleteMessage(messageId) {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '../action/delete_message.php', true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        console.log('Message deleted:', messageId);
-                        const activeConversation = document.querySelector('.conversation.active');
-                        if (activeConversation) {
-                            loadConversation(activeConversation.getAttribute('data-conversation-id'));
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../action/send_message.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                console.log('send_message response status:', xhr.status);
+                if (xhr.status === 200) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        console.log('Parsed response:', response);
+                        if (response.status === 'success') {
+                            loadConversation(conversationId);
+                            messageInput.value = '';
+                        } else {
+                            console.error('Error:', response.message);
                         }
-                    } else {
-                        console.error('Error deleting message:', xhr.statusText, xhr.responseText);
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e, xhr.responseText);
                     }
-                };
-                xhr.onerror = function() {
-                    console.error('Request failed');
-                };
-                xhr.send('message_id=' + messageId);
-            }
-
-            function blockProfile(userId, conversationId, reason) {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '../action/block_profile.php', true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onload = function() {
-                    if (xhr.status === 200) {
-                        console.log('Profile blocked:', userId);
-                        mainContent.style.display = 'block';
-                        conversationsContent.style.display = 'none';
-                        location.reload();
-                    } else {
-                        console.error('Error blocking profile:', xhr.statusText, xhr.responseText);
-                    }
-                };
-                xhr.onerror = function() {
-                    console.error('Request failed');
-                };
-                xhr.send('user_id=' + userId + '&conversation_id=' + conversationId + '&reason=' + encodeURIComponent(reason));
-            }
-
-            document.getElementById('message-form').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const messageInput = document.getElementById('message-input');
-                const message = messageInput.value;
-                console.log('Message form submitted, message:', message);
-
-                if (message.trim() === '') return;
-
-                const activeConversation = document.querySelector('.conversation.active');
-                const conversationId = activeConversation ? activeConversation.getAttribute('data-conversation-id') : currentConversationId;
-
-                if (!conversationId) {
-                    console.error('No active conversation found.');
-                    return;
+                } else {
+                    console.error('Error:', xhr.statusText, xhr.responseText);
                 }
-
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '../action/send_message.php', true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onload = function() {
-                    console.log('send_message response status:', xhr.status);
-                    if (xhr.status === 200) {
-                        try {
-                            const response = JSON.parse(xhr.responseText);
-                            console.log('Parsed response:', response);
-                            if (response.status === 'success') {
-                                loadConversation(conversationId);
-                                messageInput.value = '';
-                            } else {
-                                console.error('Error:', response.message);
-                            }
-                        } catch (e) {
-                            console.error('Error parsing JSON:', e, xhr.responseText);
-                        }
-                    } else {
-                        console.error('Error:', xhr.statusText, xhr.responseText);
-                    }
-                };
-                xhr.onerror = function() {
-                    console.error('Request failed');
-                };
-                xhr.send('conversation_id=' + conversationId + '&message=' + encodeURIComponent(message));
-            });
-
-            document.getElementById('search-form').addEventListener('submit', function(event) {
-                event.preventDefault();
-                var keyword = document.getElementById('simple-search').value;
-                console.log('Searching for:', keyword);
-
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', 'search.php?keyword=' + encodeURIComponent(keyword), true);
-
-                xhr.onload = function() {
-                    console.log('search response status:', xhr.status);
-                    if (xhr.status === 200) {
-                        console.log('Response received:', xhr.responseText);
-                        document.getElementById('results').innerHTML = xhr.responseText;
-                        document.getElementById('initial-content').style.display = 'none';
-                    } else {
-                        console.error('Error:', xhr.statusText, xhr.responseText);
-                        document.getElementById('results').innerHTML = '<p>An error occurred while processing your request. Please try again. Error: ' + xhr.statusText + '</p>';
-                    }
-                };
-
-                xhr.onerror = function() {
-                    console.error('Request failed');
-                    document.getElementById('results').innerHTML = '<p>An error occurred while processing your request. Please try again.</p>';
-                };
-
-                xhr.send();
-            });
-
-            const userCards = document.querySelectorAll('.user-card');
-            let currentIndex = 0;
-
-            const nextButton = document.getElementById('next');
-            const prevButton = document.getElementById('prev');
-
-            function updateButtonStates() {
-                prevButton.disabled = currentIndex === 0;
-                nextButton.disabled = currentIndex === userCards.length - 1;
-            }
-
-            function displayCurrentCard() {
-                userCards.forEach((card, index) => {
-                    card.style.display = index === currentIndex ? 'block' : 'none';
-                });
-                updateButtonStates();
-            }
-
-            displayCurrentCard();
-
-            nextButton.addEventListener('click', () => {
-                console.log('Next button clicked');
-                if (currentIndex < userCards.length - 1) {
-                    currentIndex++;
-                    displayCurrentCard();
-                }
-            });
-
-            prevButton.addEventListener('click', () => {
-                console.log('Prev button clicked');
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    displayCurrentCard();
-                }
-            });
+            };
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+            xhr.send('conversation_id=' + conversationId + '&message=' + encodeURIComponent(message));
         });
-    </script>
 
-</body>
+        document.getElementById('search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var keyword = document.getElementById('simple-search').value;
+            console.log('Searching for:', keyword);
 
-</html>
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'search.php?keyword=' + encodeURIComponent(keyword), true);
+
+            xhr.onload = function() {
+                console.log('search response status:', xhr.status);
+                if (xhr.status === 200) {
+                    console.log('Response received:', xhr.responseText);
+                    document.getElementById('results').innerHTML = xhr.responseText;
+                    document.getElementById('initial-content').style.display = 'none';
+                } else {
+                    console.error('Error:', xhr.statusText, xhr.responseText);
+                    document.getElementById('results').innerHTML = '<p>An error occurred while processing your request. Please try again. Error: ' + xhr.statusText + '</p>';
+                }
+            };
+
+            xhr.onerror = function() {
+                console.error('Request failed');
+                document.getElementById('results').innerHTML = '<p>An error occurred while processing your request. Please try again.</p>';
+            };
+
+            xhr.send();
+        });
+
+        const userCards = document.querySelectorAll('.user-card');
+        let currentIndex = 0;
+
+        const nextButton = document.getElementById('next');
+        const prevButton = document.getElementById('prev');
+
+        function updateButtonStates() {
+            prevButton.disabled = currentIndex === 0;
+            nextButton.disabled = currentIndex === userCards.length - 1;
+        }
+
+        function displayCurrentCard() {
+            userCards.forEach((card, index) => {
+                card.style.display = index === currentIndex ? 'block' : 'none';
+            });
+            updateButtonStates();
+        }
+
+        displayCurrentCard();
+
+        nextButton.addEventListener('click', () => {
+            console.log('Next button clicked');
+            if (currentIndex < userCards.length - 1) {
+                currentIndex++;
+                displayCurrentCard();
+            }
+        });
+
+        prevButton.addEventListener('click', () => {
+            console.log('Prev button clicked');
+            if (currentIndex > 0) {
+                currentIndex--;
+                displayCurrentCard();
+            }
+        });
+    });
+</script>
