@@ -36,13 +36,9 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#role-description">Role Description</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#folder-structure">Folder Structure</a></li>
-    <li><a href="#dependencies">Dependencies</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
   </ol>
 </details>
 
