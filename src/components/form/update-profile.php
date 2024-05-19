@@ -21,6 +21,13 @@
             <span class="flex-grow border-t border-medium_gray"></span>
         </div>
         <div class="flex flex-wrap -mx-3 mb-4">
+            <!-- EMAIL -->
+            <div class="w-full px-3 mb-4">
+                <label class="block text-sm font-bold mb-2" for="email">
+                    Email <span class="font-bold text-red-600">*</span>
+                </label>
+                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="email" name="email" type="email" value="<?php echo htmlspecialchars($_SESSION['email'] ?? '') ?>"> <!-- Pre-fill with the current email if available -->
+            </div>
             <!-- USERNAME -->
             <div class="w-full px-3 mb-4">
                 <label class="block text-sm font-bold mb-2" for="username">
@@ -30,16 +37,16 @@
             </div>
             <!-- PASSWORD CHANGE SECTION -->
             <div class="w-full px-3 mb-4">
-                <label class="block text-sm font-bold mb-2" for="current_password">
-                    Your password <span class="font-bold text-red-600">*</span>
-                </label>
-                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="current_password" name="current_password" type="password"> <!-- Input for the current password -->
-            </div>
-            <div class="w-full px-3 mb-4">
                 <button type="button" id="change-password-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Edit Password
                 </button>
                 <div id="new-password-fields" style="display: none;">
+                    <div class="mt-4">
+                        <label class="block text-sm font-bold mb-2" for="current_password">
+                            Current Password <span class="font-bold text-red-600">*</span>
+                        </label>
+                        <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="current_password" name="current_password" type="password"> <!-- Input for the current password -->
+                    </div>
                     <div class="mt-4">
                         <label class="block text-sm font-bold mb-2" for="new-password">
                             New Password <span class="font-bold text-red-600">*</span>
@@ -59,14 +66,14 @@
                 <label class="block text-sm font-bold mb-2" for="first_name">
                     First Name <span class="font-bold text-red-600">*</span>
                 </label>
-                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="first_name" name="first_name" type="text" placeholder="Jean" value="<?php echo htmlspecialchars($_SESSION['form_values']['first_name'] ?? '') ?>"> <!-- Pre-fill with the first name if available -->
+                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="first_name" name="first_name" type="text" placeholder="Jean" value="<?php echo htmlspecialchars($_SESSION['first_name'] ?? '') ?>"> <!-- Pre-fill with the first name if available -->
             </div>
             <!-- LAST NAME -->
             <div class="w-full px-3 mb-4">
                 <label class="block text-sm font-bold mb-2" for="last_name">
                     Last Name <span class="font-bold text-red-600">*</span>
                 </label>
-                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="last_name" name="last_name" type="text" placeholder="Dupont" value="<?php echo htmlspecialchars($_SESSION['form_values']['last_name'] ?? '') ?>"> <!-- Pre-fill with the last name if available -->
+                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="last_name" name="last_name" type="text" placeholder="Dupont" value="<?php echo htmlspecialchars($_SESSION['last_name'] ?? '') ?>"> <!-- Pre-fill with the last name if available -->
             </div>
             <!-- GENDER -->
             <div class="w-full px-3 mb-4">
@@ -75,7 +82,7 @@
                 </span>
                 <ul class="grid gap-4 grid-cols-3 md:w-1/2">
                     <li>
-                        <input type="radio" id="genderMale" name="gender" value="Male" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['gender'] == 'Male') ? 'checked' : ''; ?>> <!-- Pre-check if gender is Male -->
+                        <input type="radio" id="genderMale" name="gender" value="Male" class="hidden peer" <?php echo (isset($_SESSION['gender']) && $_SESSION['gender'] == 'Male') ? 'checked' : ''; ?>> <!-- Pre-check if gender is Male -->
                         <label for="genderMale" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Male</div>
@@ -83,7 +90,7 @@
                         </label>
                     </li>
                     <li>
-                        <input type="radio" id="genderFemale" name="gender" value="Female" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['gender'] == 'Female') ? 'checked' : ''; ?>> <!-- Pre-check if gender is Female -->
+                        <input type="radio" id="genderFemale" name="gender" value="Female" class="hidden peer" <?php echo (isset($_SESSION['gender']) && $_SESSION['gender'] == 'Female') ? 'checked' : ''; ?>> <!-- Pre-check if gender is Female -->
                         <label for="genderFemale" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Female</div>
@@ -91,7 +98,7 @@
                         </label>
                     </li>
                     <li>
-                        <input type="radio" id="genderOther" name="gender" value="Other" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['gender'] == 'Other') ? 'checked' : ''; ?>> <!-- Pre-check if gender is Other -->
+                        <input type="radio" id="genderOther" name="gender" value="Other" class="hidden peer" <?php echo (isset($_SESSION['gender']) && $_SESSION['gender'] == 'Other') ? 'checked' : ''; ?>> <!-- Pre-check if gender is Other -->
                         <label for="genderOther" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Other</div>
@@ -106,9 +113,9 @@
                     Date of Birth <span class="font-bold text-red-600">*</span>
                 </label>
                 <div class="flex gap-4">
-                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-32" type="number" placeholder="YYYY" name="birth_year" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_year'] ?? '') ?>"> <!-- Pre-fill with the birth year if available -->
-                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-24" type="number" placeholder="MM" name="birth_month" max="12" min="1" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_month'] ?? '') ?>"> <!-- Pre-fill with the birth month if available -->
-                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-24" type="number" placeholder="DD" name="birth_day" max="31" min="1" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_day'] ?? '') ?>"> <!-- Pre-fill with the birth day if available -->
+                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-32" type="number" placeholder="YYYY" name="birth_year" value="<?php echo htmlspecialchars($_SESSION['birth_year'] ?? '') ?>"> <!-- Pre-fill with the birth year if available -->
+                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-24" type="number" placeholder="MM" name="birth_month" max="12" min="1" value="<?php echo htmlspecialchars($_SESSION['birth_month'] ?? '') ?>"> <!-- Pre-fill with the birth month if available -->
+                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-24" type="number" placeholder="DD" name="birth_day" max="31" min="1" value="<?php echo htmlspecialchars($_SESSION['birth_day'] ?? '') ?>"> <!-- Pre-fill with the birth day if available -->
                 </div>
             </div>
             <!-- COUNTRY -->
@@ -117,11 +124,11 @@
                     Select a country <span class="font-bold text-red-600">*</span>
                 </label>
                 <select class="border-medium_gray border bg-black rounded-md w-full py-2 px-3 text-white leading-tight focus:outline-none focus:border-white" id="country" name="country">
-                    <option value="" <?php echo (!isset($_SESSION['form_values']['country']) || $_SESSION['form_values']['country'] === "") ? "selected" : ""; ?>>Choose a country</option>
-                    <option value="US" <?php echo (isset($_SESSION['form_values']['country']) && $_SESSION['form_values']['country'] === "US") ? "selected" : ""; ?>>United States</option>
-                    <option value="CA" <?php echo (isset($_SESSION['form_values']['country']) && $_SESSION['form_values']['country'] === "CA") ? "selected" : ""; ?>>Canada</option>
-                    <option value="FR" <?php echo (isset($_SESSION['form_values']['country']) && $_SESSION['form_values']['country'] === "FR") ? "selected" : ""; ?>>France</option>
-                    <option value="DE" <?php echo (isset($_SESSION['form_values']['country']) && $_SESSION['form_values']['country'] === "DE") ? "selected" : ""; ?>>Germany</option>
+                    <option value="" <?php echo (!isset($_SESSION['country']) || $_SESSION['country'] === "") ? "selected" : ""; ?>>Choose a country</option>
+                    <option value="US" <?php echo (isset($_SESSION['country']) && $_SESSION['country'] === "US") ? "selected" : ""; ?>>United States</option>
+                    <option value="CA" <?php echo (isset($_SESSION['country']) && $_SESSION['country'] === "CA") ? "selected" : ""; ?>>Canada</option>
+                    <option value="FR" <?php echo (isset($_SESSION['country']) && $_SESSION['country'] === "FR") ? "selected" : ""; ?>>France</option>
+                    <option value="DE" <?php echo (isset($_SESSION['country']) && $_SESSION['country'] === "DE") ? "selected" : ""; ?>>Germany</option>
                 </select>
             </div>
             <!-- CITY -->
@@ -129,7 +136,7 @@
                 <label class="block text-sm font-bold mb-2" for="city">
                     City <span class="font-bold text-red-600">*</span>
                 </label>
-                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" type="text" placeholder="London" id="city" name="city" value="<?php echo htmlspecialchars($_SESSION['form_values']['city'] ?? '') ?>"> <!-- Pre-fill with the city if available -->
+                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" type="text" placeholder="London" id="city" name="city" value="<?php echo htmlspecialchars($_SESSION['city'] ?? '') ?>"> <!-- Pre-fill with the city if available -->
             </div>
             <!-- LOOKING FOR -->
             <div class="w-full px-3 mb-4">
@@ -138,7 +145,7 @@
                 </span>
                 <ul class="grid gap-4 grid-cols-3 md:w-1/2">
                     <li>
-                        <input type="radio" id="lookingForMale" name="looking_for" value="Male" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['looking_for'] == 'Male') ? 'checked' : ''; ?>> <!-- Pre-check if looking for Male -->
+                        <input type="radio" id="lookingForMale" name="looking_for" value="Male" class="hidden peer" <?php echo (isset($_SESSION['gender']) && $_SESSION['looking_for'] == 'Male') ? 'checked' : ''; ?>> <!-- Pre-check if looking for Male -->
                         <label for="lookingForMale" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Male</div>
@@ -146,7 +153,7 @@
                         </label>
                     </li>
                     <li>
-                        <input type="radio" id="lookingForFemale" name="looking_for" value="Female" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['looking_for'] == 'Female') ? 'checked' : ''; ?>> <!-- Pre-check if looking for Female -->
+                        <input type="radio" id="lookingForFemale" name="looking_for" value="Female" class="hidden peer" <?php echo (isset($_SESSION['gender']) && $_SESSION['looking_for'] == 'Female') ? 'checked' : ''; ?>> <!-- Pre-check if looking for Female -->
                         <label for="lookingForFemale" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Female</div>
@@ -154,7 +161,7 @@
                         </label>
                     </li>
                     <li>
-                        <input type="radio" id="lookingForBoth" name="looking_for" value="Both" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['looking_for'] == 'Everyone') ? 'checked' : ''; ?>> <!-- Pre-check if looking for Both -->
+                        <input type="radio" id="lookingForBoth" name="looking_for" value="Both" class="hidden peer" <?php echo (isset($_SESSION['gender']) && $_SESSION['looking_for'] == 'Everyone') ? 'checked' : ''; ?>> <!-- Pre-check if looking for Both -->
                         <label for="lookingForBoth" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Everyone</div>
@@ -176,7 +183,7 @@
                 <label class="block text-sm font-bold mb-2" for="occupation">
                     Occupation
                 </label>
-                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" type="text" placeholder="Engineer" id="occupation" name="occupation" value="<?php echo htmlspecialchars($_SESSION['form_values']['occupation'] ?? '') ?>"> <!-- Pre-fill with the occupation if available -->
+                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" type="text" placeholder="Engineer" id="occupation" name="occupation" value="<?php echo htmlspecialchars($_SESSION['occupation'] ?? '') ?>"> <!-- Pre-fill with the occupation if available -->
             </div>
             <!-- SMOKING STATUS -->
             <div class="w-full px-3 mb-4">
@@ -185,7 +192,7 @@
                 </span>
                 <ul class="grid gap-4 grid-cols-3 md:w-1/2">
                     <li>
-                        <input type="radio" id="smokingYes" name="smoking" value="Yes" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['looking_for'] == 'Male') ? 'checked' : ''; ?>> <!-- Pre-check if smoking is Yes -->
+                        <input type="radio" id="smokingYes" name="smoking" value="Yes" class="hidden peer" <?php echo (isset($_SESSION['smoking_status']) && $_SESSION['smoking_status'] == 'Yes') ? 'checked' : ''; ?>> <!-- Pre-check if smoking is Yes -->
                         <label for="smokingYes" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Yes</div>
@@ -193,7 +200,7 @@
                         </label>
                     </li>
                     <li>
-                        <input type="radio" id="smokingNo" name="smoking" value="No" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['looking_for'] == 'Female') ? 'checked' : ''; ?>> <!-- Pre-check if smoking is No -->
+                        <input type="radio" id="smokingNo" name="smoking" value="No" class="hidden peer" <?php echo (isset($_SESSION['smoking_status']) && $_SESSION['smoking_status'] == 'No') ? 'checked' : ''; ?>> <!-- Pre-check if smoking is No -->
                         <label for="smokingNo" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">No</div>
@@ -203,7 +210,7 @@
                 </ul>
             </div>
             <!-- HOBBIES -->
-            <input type="hidden" id="hiddenHobbiesInput" name="hobbies" value="<?php echo htmlspecialchars($_SESSION['form_values']['hobbies'] ?? '') ?>"> <!-- Hidden input to store hobbies -->
+            <input type="hidden" id="hiddenHobbiesInput" name="hobbies" value="<?php echo htmlspecialchars($_SESSION['hobbies'] ?? '') ?>"> <!-- Hidden input to store hobbies -->
             <div class="w-full px-3 mb-4">
                 <label class="block text-sm font-bold mb-2">Hobbies</label>
                 <div class="flex flex-wrap gap-1">
@@ -216,7 +223,7 @@
                 <label class="block text-sm font-bold mb-2" for="about_me">
                     About me
                 </label>
-                <textarea class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" placeholder="Tell us something about you" rows="4" id="about_me" name="about_me"><?php echo htmlspecialchars($_SESSION['form_values']['about_me'] ?? '') ?></textarea> <!-- Pre-fill with the about me section if available -->
+                <textarea class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" placeholder="Tell us something about you" rows="4" id="about_me" name="about_me"><?php echo htmlspecialchars($_SESSION['about_me'] ?? '') ?></textarea> <!-- Pre-fill with the about me section if available -->
             </div>
         </div>
         <!-- NEXT STEP BUTTON -->
@@ -231,38 +238,64 @@
 
     <!-------------------------- PHOTOS SECTION --------------------------->
     <section id="photoUploadForm" class="hidden">
-        <div class="w-full mx-auto flex flex-col items-center justify-center pt-6 pb-8 mb-24">
+        <div class="w-full mx-auto flex flex-col items-center justify-center pt-6 pb-8 mb-24 ">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-center items-center">
-                <?php for ($i = 1; $i <= 4; $i++) : ?> <!-- Loop to create photo upload sections -->
-                    <div class="photo-card relative w-[165px] h-[240px] border-2 border-dashed border-medium_gray bg-black rounded-xl cursor-pointer overflow-visible" onclick="document.getElementById('photo-upload<?= $i ?>').click()">
-                        <input type="file" name="photo<?= $i ?>" id="photo-upload<?= $i ?>" class="hidden" accept="image/*" onchange="loadImage(event, 'photo<?= $i ?>')"> <!-- Hidden file input for photo upload -->
-                        <div id="photo<?= $i ?>" class="photo-placeholder rounded-xl absolute inset-0 flex items-center justify-center" style="background-image: url('<?php echo isset($_SESSION['user_photos']['photo' . $i]) ? htmlspecialchars($_SESSION['user_photos']['photo' . $i]) : ''; ?>'); background-size: cover; background-position: center;">
-                            <?php if (!empty($_SESSION['user_photos']['photo' . $i])) : ?> <!-- Check if the photo exists in the session -->
-                                <div class="delete-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-b from-red_primary to-rose_secondary" onclick="event.stopPropagation(); deleteImage('photo<?= $i ?>');">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
-                                    </svg>
-                                </div>
-                            <?php else : ?>
-                                <div class="add-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-b from-sky_primary to-rose_primary">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                    </svg>
-                                </div>
-                            <?php endif; ?>
+                <!-- Photo Card 1 -->
+                <div class="photo-card relative w-[165px] h-[240px] border-2 border-dashed border-medium_gray bg-black rounded-xl cursor-pointer overflow-visible" onclick="document.getElementById('photo-upload1').click()">
+                    <input type="file" name="photo1" id="photo-upload1" class="hidden" accept="image/*" onchange="loadImage(event, 'photo1')">
+                    <div id="photo1" class="photo-placeholder absolute inset-0 flex items-center justify-center">
+                        <div class="add-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-b from-sky_primary to-rose_primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
                         </div>
                     </div>
-                <?php endfor; ?>
+                </div>
+                <!-- Photo Card 2 -->
+                <div class="photo-card relative w-[165px] h-[240px] border-2 border-dashed border-medium_gray bg-black rounded-xl cursor-pointer overflow-visible" onclick="document.getElementById('photo-upload2').click()">
+                    <input type="file" name="photo2" id="photo-upload2" class="hidden" accept="image/*" onchange="loadImage(event, 'photo2')">
+                    <div id="photo2" class="photo-placeholder absolute inset-0 flex items-center justify-center">
+                        <div class="add-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-b from-sky_primary to-rose_primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <!-- Photo Card 3 -->
+                <div class="photo-card relative w-[165px] h-[240px] border-2 border-dashed border-medium_gray bg-black rounded-xl cursor-pointer overflow-visible" onclick="document.getElementById('photo-upload3').click()">
+                    <input type="file" name="photo3" id="photo-upload3" class="hidden" accept="image/*" onchange="loadImage(event, 'photo3')">
+                    <div id="photo3" class="photo-placeholder absolute inset-0 flex items-center justify-center">
+                        <div class="add-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-b from-sky_primary to-rose_primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <!-- Photo Card 4 -->
+                <div class="photo-card relative w-[165px] h-[240px] border-2 border-dashed border-medium_gray bg-black rounded-xl cursor-pointer overflow-visible" onclick="document.getElementById('photo-upload4').click()">
+                    <input type="file" name="photo4" id="photo-upload4" class="hidden" accept="image/*" onchange="loadImage(event, 'photo4')">
+                    <div id="photo4" class="photo-placeholder absolute inset-0 flex items-center justify-center">
+                        <div class="add-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-b from-sky_primary to-rose_primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <p class="text-medium_gray font-semibold text-base text-center w-full">Upload 2 photos to start, 4 if you want your profile to be liked as much as possible</p> <!-- Instruction for photo upload -->
+        <p class="text-medium_gray font-semibold text-base text-center w-full">Upload 2 photos to start, 4 if you want your profile to be liked as much as possible</p>
         <div class="flex flex-row gap-6 md:gap-24 justify-center mt-24 mb-24">
-            <button type="button" class="p-4 rounded-full border-white border-2 mb-4" onclick="toggleForms()"> <!-- Button to toggle the form sections -->
+            <!-- Button to go back to the previous section -->
+            <button type="button" class="p-4 rounded-full border-white border-2 mb-4" onclick="toggleForms()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
             </button>
-            <button type="button" class="p-4 rounded-full border-white border-2 mb-4" onclick="toggleForms2()"> <!-- Button to toggle the form sections -->
+            <!-- Button to proceed to the next section -->
+            <button type="button" class="p-4 rounded-full border-white border-2 mb-4" onclick="toggleForms2()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
@@ -275,7 +308,7 @@
         <div class="container mx-auto px-4 my-8">
             <div id="musicGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
             </div>
-            <input type="hidden" id="hiddenMusicInput" name="selected_music" value="<?php echo htmlspecialchars($_SESSION['form_values']['selected_music'] ?? '') ?>"> <!-- Hidden input to store selected music genres -->
+            <input type="hidden" id="hiddenMusicInput" name="selected_music" value="<?php echo htmlspecialchars($_SESSION['selected_music'] ?? '') ?>"> <!-- Hidden input to store selected music genres -->
         </div>
         <p class="text-medium_gray font-semibold text-base text-center w-full">Select at least one music genre to start</p> <!-- Instruction for music selection -->
         <div class="flex flex-row gap-6 md:gap-24 justify-center mt-24 mb-24">
@@ -347,7 +380,7 @@
     ];
 
     // Get selected music titles from session
-    const selectedMusicTitles = "<?php echo $_SESSION['form_values']['selected_music'] ?? ''; ?>".split(',').map(m => m.trim());
+    const selectedMusicTitles = "<?php echo $_SESSION['selected_music'] ?? ''; ?>".split(',').map(m => m.trim());
 
     // Class to handle music card rendering and selection
     class MusicCard {
@@ -463,7 +496,7 @@
 
     // Update hobbies based on user selection
     document.addEventListener('DOMContentLoaded', function() {
-        const selectedHobbies = "<?php echo htmlspecialchars($_SESSION['form_values']['hobbies'] ?? ''); ?>"
+        const selectedHobbies = "<?php echo htmlspecialchars($_SESSION['hobbies'] ?? ''); ?>"
             .split(',')
             .map(hobby => hobby.trim())
             .filter(hobby => hobby.length > 0);
@@ -493,7 +526,12 @@
         }
     });
 
-    // Function to load image into the photo card
+    /// Event listener for clicking on photo card to open file input
+    document.getElementById('photoCard1').addEventListener('click', function() {
+        document.getElementById('photo-upload1').click();
+    });
+
+    // Load the selected image and display it in the photo card
     function loadImage(event, photoId) {
         var reader = new FileReader();
         reader.onload = function() {
@@ -504,22 +542,22 @@
             output.style.backgroundRepeat = 'no-repeat';
             output.style.borderRadius = '8px';
             output.innerHTML = `<div class="delete-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-b from-red_primary to-rose_secondary" onclick="event.stopPropagation(); deleteImage('${photoId}');">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
-    </svg>
-</div>`;
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                                </svg>
+                            </div>`;
         };
         reader.readAsDataURL(event.target.files[0]);
     }
 
-    // Function to delete the uploaded image from the photo card
+    // Delete the selected image from the photo card
     function deleteImage(photoId) {
         var output = document.getElementById(photoId);
         output.style.backgroundImage = '';
         output.innerHTML = `<div class="add-icon absolute bottom-[-8px] right-[-8px] border-[1.5px] border-white rounded-full p-[1.5px] bg-gradient-to-b from-sky_primary to-rose_primary">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-    </svg>
-</div>`;
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                        </div>`;
     }
 </script>

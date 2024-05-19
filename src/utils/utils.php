@@ -21,9 +21,9 @@ function checkSubscription($user)
 
         // Prepare data to update user profile
         $dataToUpdate = [
-            22 => '', // Subscription
-            23 => '', // Subscription Start Date
-            24 => ''  // Subscription End Date
+            23 => '', // Subscription
+            24 => '', // Subscription Start Date
+            25 => ''  // Subscription End Date
         ];
 
         // Update user profile with new subscription details

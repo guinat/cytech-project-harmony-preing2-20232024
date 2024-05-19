@@ -28,15 +28,12 @@ session_start();
     <title>Harmony</title>
 </head>
 
-<body class="bg-[url('/assets/components/hero/bg-hero.png')] bg-cover bg-center bg-no-repeat bg-fixed font-montserrat">
+<body class="bg-[url('/assets/components/hero/bg-hero.png')] bg-cover bg-center bg-no-repeat bg-fixed font-montserrat text-white min-h-screen flex flex-col">
     <?php
     // Including header component file
     require_once 'src/components/header/header.php';
     ?>
-    <?php
-    // Including hero component file
-    require_once 'src/components/hero/hero.php';
-    ?>
+
     <?php
     // Including footer component file
     require_once 'src/components/footer/footer.php';

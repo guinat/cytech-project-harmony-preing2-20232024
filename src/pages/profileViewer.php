@@ -74,43 +74,42 @@ if ($userId) {
                     <div id="carousel" class="relative">
                         <div class="flex overflow-x-hidden relative">
                             <!-- Loop through specific indexes to display user photos -->
-                            <?php for ($i = 14; $i <= 17; $i++) : ?>
+                            <?php for ($i = 15; $i <= 18; $i++) : ?>
                                 <?php if (isset($userData[$i]) && !empty($userData[$i])) : ?>
                                     <div class="flex-none w-[290px] h-[565px] md:w-[330px] md:h-[615px] bg-cover bg-center" style="background-image: url('<?php echo htmlspecialchars($userData[$i]); ?>');">
                                         <div class="flex h-full items-end bg-gradient-to-t from-black via-transparent">
                                             <div class="p-4 text-white">
-                                                <h2 class="text-3xl font-bold"><?php echo htmlspecialchars($userData[6]); ?></h2>
+                                                <h2 class="text-3xl font-bold"><?php echo htmlspecialchars($userData[7]); ?></h2>
                                                 <div class="text-sm flex gap-2 items-center mb-0">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                                                         <path fill-rule="evenodd" d="M19.952 1.651a.75.75 0 0 1 .298.599V16.303a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.403-4.909l2.311-.66a1.5 1.5 0 0 0 1.088-1.442V6.994l-9 2.572v9.737a3 3 0 0 1-2.176 2.884l-1.32.377a2.553 2.553 0 1 1-1.402-4.909l2.31-.66a1.5 1.5 0 0 0 1.088-1.442V5.25a.75.75 0 0 1 .544-.721l10.5-3a.75.75 0 0 1 .658.122Z" clip-rule="evenodd" />
                                                     </svg>
-                                                    <p><?php echo htmlspecialchars($userData[13]); ?></p>
+                                                    <p><?php echo htmlspecialchars($userData[14]); ?></p>
                                                 </div>
                                                 <div class="text-sm flex gap-2 items-center mb-0">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                                                         <path fill-rule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" />
                                                     </svg>
-                                                    <p><?php echo htmlspecialchars($userData[11]); ?></p>
+                                                    <p><?php echo htmlspecialchars($userData[12]); ?></p>
                                                 </div>
                                                 <div class="text-sm flex gap-2 items-center mb-0">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                                                         <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                                                     </svg>
-                                                    <p><?php echo htmlspecialchars($userData[20]); ?></p>
+                                                    <p><?php echo htmlspecialchars($userData[21]); ?></p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="w-full border-b border-gray-500"></div>
                                         <div class="bg-black">
                                             <div class="p-4 text-white">
-                                                <p class="text-base italic font-semibold"><?php echo htmlspecialchars($userData[21]); ?></p>
+                                                <p class="text-base italic font-semibold"><?php echo htmlspecialchars($userData[22]); ?></p>
                                             </div>
                                             <div class="w-full border-b border-gray-500"></div>
                                             <div class="p-4 text-white">
                                                 <h3 class="text-sm uppercase font-semibold mb-4">Additional Information</h3>
-                                                <p class="text-xs font-semibold">Occupation: <?php echo htmlspecialchars($userData[18] ?? 'N/A'); ?></p>
-                                                <p class="text-xs font-semibold">Smoking Status: <?php echo htmlspecialchars($userData[19] ?? 'N/A'); ?></p>
-                                                <p class="text-xs font-semibold">Harmony Score: <?php echo htmlspecialchars($userData[22] ?? 'N/A'); ?></p>
+                                                <p class="text-xs font-semibold">Occupation: <?php echo htmlspecialchars($userData[19] ?? 'N/A'); ?></p>
+                                                <p class="text-xs font-semibold">Smoking Status: <?php echo htmlspecialchars($userData[20] ?? 'N/A'); ?></p>
                                             </div>
                                         </div>
                                     </div>
@@ -119,7 +118,7 @@ if ($userId) {
                         </div>
                         <div class="flex justify-center p-4 gap-1 absolute top-0 left-0 right-0">
                             <!-- Carousel indicators -->
-                            <?php for ($i = 14; $i <= 17; $i++) : ?>
+                            <?php for ($i = 15; $i <= 18; $i++) : ?>
                                 <?php if (isset($userData[$i]) && !empty($userData[$i])) : ?>
                                     <div class="w-1/2 h-2.5 bg-gray-500 rounded-full cursor-pointer carousel-indicator" data-slide="<?php echo $i - 14; ?>"></div>
                                 <?php endif; ?>

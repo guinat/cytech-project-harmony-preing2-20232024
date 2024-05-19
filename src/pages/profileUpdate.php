@@ -1,8 +1,6 @@
 <?php
 session_start();
 
-// Debugging: Display the session array
-echo '<pre>' . print_r($_SESSION, true) . '</pre>';
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +12,7 @@ echo '<pre>' . print_r($_SESSION, true) . '</pre>';
     <!-- Importing Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/tailwind.config.js"></script>
-    <title>Complete Your Profile</title>
+    <title>Update Your Profile</title>
 </head>
 
 <body class="font-montserrat text-white bg-dark_gray">
@@ -26,17 +24,25 @@ echo '<pre>' . print_r($_SESSION, true) . '</pre>';
                     <img src="/assets/logo_colored.svg" alt="Logo" class="w-8">
                 </a>
             </div>
+            <a href="/src/pages/app.php" class="flex flex-row gap-6 items-center">
+                <!-- Log Out button -->
+                <span class="font-semibold text-base text-transparent bg-clip-text bg-gradient-to-br from-sky_primary to-rose_primary">Go to Harmony</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m15 15 6-6m0 0-6-6m6 6H9a6 6 0 0 0 0 12h3" />
+                </svg>
+            </a>
             <div class="flex flex-row gap-6 items-center">
                 <!-- Log Out button -->
                 <a href="/src/security/logout.php" class="font-bold text-white px-4 py-2 rounded-full border-[2px] border-white">Log Out</a>
             </div>
+
         </div>
     </header>
 
     <!-- Main section for completing the profile -->
     <section class="container mx-auto px-4">
         <div class="justify-center flex">
-            <h2 class="text-2xl text-white font-semibold my-5">Complete Your Profile</h2>
+            <h2 class="text-2xl text-white font-semibold my-5">Update Your Profile</h2>
         </div>
         <div class="items-center justify-center flex">
             <!-- Include the form for updating the profile -->

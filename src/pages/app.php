@@ -47,24 +47,24 @@ function getUsersFromCSV($csvFilePath, $excludeUserId = null)
                 continue;
             }
 
-            $user = new UserEntity($data[0], $data[3], $data[4]);
+            $user = new UserEntity($data[0], $data[3], $data[4], $data[5], $data[6]);
             if (isset($data[0])) $user->getId($data[0]);
-            if (isset($data[6])) $user->setFirstName($data[6]);
-            if (isset($data[7])) $user->setLastName($data[7]);
-            if (isset($data[8])) $user->setGender($data[8]);
-            if (isset($data[9])) $user->setDateOfBirth($data[9]);
-            if (isset($data[10])) $user->setCountry($data[10]);
-            if (isset($data[11])) $user->setCity($data[11]);
-            if (isset($data[12])) $user->setLookingFor($data[12]);
-            if (isset($data[13])) $user->setMusicPreferences($data[13]);
-            if (isset($data[14])) $user->setPhotos(array_slice($data, 14, 4));
-            if (isset($data[18])) $user->setOccupation($data[18]);
-            if (isset($data[19])) $user->setSmokingStatus($data[19]);
-            if (isset($data[20])) $user->setHobbies($data[20]);
-            if (isset($data[21])) $user->setAboutMe($data[21]);
-            if (isset($data[22])) $user->setSubscription($data[22]);
-            if (isset($data[23])) $user->setSubscriptionStartDate($data[23]);
-            if (isset($data[24])) $user->setSubscriptionEndDate($data[24]);
+            if (isset($data[7])) $user->setFirstName($data[7]);
+            if (isset($data[8])) $user->setLastName($data[8]);
+            if (isset($data[9])) $user->setGender($data[9]);
+            if (isset($data[10])) $user->setDateOfBirth($data[10]);
+            if (isset($data[11])) $user->setCountry($data[11]);
+            if (isset($data[12])) $user->setCity($data[12]);
+            if (isset($data[13])) $user->setLookingFor($data[13]);
+            if (isset($data[14])) $user->setMusicPreferences($data[14]);
+            if (isset($data[15])) $user->setPhotos(array_slice($data, 15, 4));
+            if (isset($data[19])) $user->setOccupation($data[19]);
+            if (isset($data[20])) $user->setSmokingStatus($data[20]);
+            if (isset($data[21])) $user->setHobbies($data[21]);
+            if (isset($data[22])) $user->setAboutMe($data[22]);
+            if (isset($data[23])) $user->setSubscription($data[23]);
+            if (isset($data[24])) $user->setSubscriptionStartDate($data[24]);
+            if (isset($data[25])) $user->setSubscriptionEndDate($data[25]);
             $users[] = $user;
         }
         fclose($handle);
@@ -138,45 +138,22 @@ function getDeletedConversations()
 function getMutualLikes($userId)
 {
     $mutualLikes = [];
-    $likesFile = '../data/profile_likes.csv';
     $matchesFile = '../data/matches.csv';
-    $userLikes = [];
-    $likedByUsers = [];
-    $currentDateTime = date('Y-m-d H:i:s');
 
-    // Ouvrir le fichier des likes
-    if (file_exists($likesFile) && ($handle = fopen($likesFile, 'r')) !== FALSE) {
+    if (file_exists($matchesFile) && ($handle = fopen($matchesFile, 'r')) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
             if ($data[0] == $userId) {
-                $userLikes[] = $data[1];
-            }
-            if ($data[1] == $userId) {
-                $likedByUsers[] = $data[0];
+                $mutualLikes[] = $data[1];
+            } elseif ($data[1] == $userId) {
+                $mutualLikes[] = $data[0];
             }
         }
         fclose($handle);
     }
 
-    // Ouvrir le fichier des matchs en mode ajout
-    $matchesHandle = fopen($matchesFile, 'a');
-    if ($matchesHandle === FALSE) {
-        error_log('Failed to open matches file for appending: ' . $matchesFile);
-        return $mutualLikes; // Retourner les likes mutuels même si l'écriture échoue
-    }
-
-    // Trouver les likes mutuels et écrire les matchs dans le fichier CSV
-    foreach ($userLikes as $likedUserId) {
-        if (in_array($likedUserId, $likedByUsers)) {
-            $mutualLikes[] = $likedUserId;
-            // Écrire le match dans le fichier CSV
-            fputcsv($matchesHandle, [$userId, $likedUserId, $currentDateTime]);
-        }
-    }
-
-    fclose($matchesHandle);
-
     return $mutualLikes;
 }
+
 
 
 $currentUserId = $_SESSION['user_id'] ?? null; // Get the current user ID from the session
@@ -218,21 +195,21 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
     <!-- Sidebar for large screens -->
     <aside class="relative hidden lg:block w-80 h-screen bg-black border-r border-gray-500 overflow-y-auto">
         <div class="bg-gradient-to-r from-sky_primary to-rose_primary flex items-center justify-between p-5 mb-6">
-            <div class="flex items-center">
+            <a href="settings.php" class="flex items-center">
                 <div class="flex items-center justify-center w-10 h-10 border-2 border-white rounded-full overflow-hidden">
-                    <img src="<?php echo isset($_SESSION['photos']['1']) ? htmlspecialchars($_SESSION['photos']['1']) : ''; ?>" class="object-cover">
+                    <img src="<?php echo htmlspecialchars($user->getPhotos()[0] ?? ''); ?>" class="object-cover object-center">
                 </div>
                 <span class="ml-3 text-xs uppercase font-bold <?php echo $user->getSubscription() ? 'bg-clip-text text-transparent bg-gradient-to-br from-sky_primary to-rose_primary drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,1)]' : 'text-red-900 text-extrabold'; ?>">
                     <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['first_name']) : ''; ?>
                 </span>
-            </div>
-            <div class="bg-black bg-opacity-60 rounded-full flex items-center justify-center w-5 h-5 p-3">
+            </a>
+            <a href="settings.php" class="bg-black bg-opacity-60 rounded-full flex items-center justify-center w-5 h-5 p-3">
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                         <path fill-rule="evenodd" d="M11.828 2.25c-.916 0-1.699.663-1.85 1.567l-.091.549a.798.798 0 0 1-.517.608 7.45 7.45 0 0 0-.478.198.798.798 0 0 1-.796-.064l-.453-.324a1.875 1.875 0 0 0-2.416.2l-.243.243a1.875 1.875 0 0 0-.2 2.416l.324.453a.798.798 0 0 1 .064.796 7.448 7.448 0 0 0-.198.478.798.798 0 0 1-.608.517l-.55.092a1.875 1.875 0 0 0-1.566 1.849v.344c0 .916.663 1.699 1.567 1.85l.549.091c.281.047.508.25.608.517.06.162.127.321.198.478a.798.798 0 0 1-.064.796l-.324.453a1.875 1.875 0 0 0 .2 2.416l.243.243c.648.648 1.67.733 2.416.2l.453-.324a.798.798 0 0 1 .796-.064c.157.071.316.137.478.198.267.1.47.327.517.608l.092.55c.15.903.932 1.566 1.849 1.566h.344c.916 0 1.699-.663 1.85-1.567l.091-.549a.798.798 0 0 1 .517-.608 7.52 7.52 0 0 0 .478-.198.798.798 0 0 1 .796.064l.453.324a1.875 1.875 0 0 0 2.416-.2l.243-.243c.648-.648.733-1.67.2-2.416l-.324-.453a.798.798 0 0 1-.064-.796c.071-.157.137-.316.198-.478.1-.267.327-.47.608-.517l.55-.091a1.875 1.875 0 0 0 1.566-1.85v-.344c0-.916-.663-1.699-1.567-1.85l-.549-.091a.798.798 0 0 1-.608-.517 7.507 7.507 0 0 0-.198-.478.798.798 0 0 1 .064-.796l.324-.453a1.875 1.875 0 0 0-.2-2.416l-.243-.243a1.875 1.875 0 0 0-2.416-.2l-.453.324a.798.798 0 0 1-.796.064 7.462 7.462 0 0 0-.478-.198.798.798 0 0 1-.517-.608l-.091-.55a1.875 1.875 0 0 0-1.85-1.566h-.344ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" clip-rule="evenodd" />
                     </svg>
                 </span>
-            </div>
+            </a>
         </div>
         <?php if (isSubscribed($user)) : ?>
             <div class="flex-1 flex items-center justify-center mb-6">
@@ -259,7 +236,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
                 <?php if ($conversations) : ?>
                     <?php foreach ($conversations as $conversation) : ?>
                         <div class="conversation p-4 bg-black rounded shadow cursor-pointer" data-conversation-id="<?php echo $conversation[0]; ?>" data-user-id="<?php echo ($conversation[1] == $currentUserId) ? $conversation[2] : $conversation[1]; ?>">
-                            Conversation with <?php echo ($conversation[1] == $currentUserId) ? getUser($conversation[2], '../data/users.csv')->getFirstName() : getUser($conversation[1], '../data/users.csv')->getFirstName(); ?>
                         </div>
                     <?php endforeach; ?>
                 <?php else : ?>
@@ -375,28 +351,26 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             </div>
         </section>
         <!-- CONVERSATIONS -->
-        <section class="container mx-auto justify-center flex items-center" id="conversations-content" style="display: none;">
-            <div class="bg-white max-w-md md:max-w-lg rounded-xl overflow-hidden">
-                <div class="flex justify-between p-4">
-                    <button id="close-conversation" class="text-gray-500 hover:text-gray-700">&times; Close</button>
-                    <div class="flex space-x-2">
-                        <button id="report-profile" class="bg-yellow-500 text-white p-2 rounded-lg">Signaler</button>
-                        <button id="block-profile" class="bg-red-500 text-white p-2 rounded-lg">Bloquer</button>
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex-row">
-                    <div class="flex-1 max-h-[75vh] overflow-y-auto p-4 space-y-4">
-                        <div id="messages-list">
-                            <!-- Messages will be loaded here via AJAX -->
-                        </div>
-                        <form id="message-form" class="flex bg-gray-200">
-                            <input type="text" id="message-input" class="flex-1 p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:border-blue-500" placeholder="Type a message...">
-                            <button type="submit" class="bg-blue-500 text-white p-2 rounded-r-lg">Send</button>
-                        </form>
-                    </div>
+        <div id="conversations-content" style="display: none;" class="w-full bg-black max-w-md md:max-w-lg rounded-xl overflow-hidden">
+            <div class="flex justify-between p-4">
+                <button id="close-conversation" class="text-gray-400 hover:text-gray-700">&times; Close</button>
+                <div class="flex space-x-2">
+                    <button id="report-profile" class="text-sky_primary border border-white p-2 rounded-lg">Signaler</button>
+                    <button id="block-profile" class="text-rose_primary border border-white p-2 rounded-lg">Bloquer</button>
                 </div>
             </div>
-        </section>
+            <div class="flex flex-col md:flex-row">
+                <div class="flex-1 max-h-[75vh] overflow-y-auto p-4 space-y-4">
+                    <div id="messages-list" class="flex flex-col space-y-5">
+                        <!-- Messages will be loaded here via AJAX -->
+                    </div>
+                    <form id="message-form" class="flex bg-black mb-4">
+                        <input type="text" id="message-input" class="flex-1 bg-dark_gray p-3 border border-medium_gray rounded-l-lg focus:outline-none" placeholder="Type a message...">
+                        <button type="submit" class="bg-gradient-to-br from-sky_primary to-rose_primary text-white p-2 rounded-r-lg">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <!-- Report User Modal -->
         <div id="report-user-modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
@@ -449,7 +423,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Page loaded');
 
         const matchesTab = document.getElementById('matchs-tab');
         const messagesTab = document.getElementById('messages-tab');
@@ -473,17 +446,18 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
         let currentUserId;
         let currentConversationId;
 
-        matchesTab.addEventListener('click', function() {
-            console.log('Matches tab clicked');
-            matchesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
-            messagesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
-            matchesContent.classList.remove('hidden');
-            recentConversationsContent.classList.add('hidden');
-            mainContent.style.display = 'block';
-            conversationsContent.style.display = 'none'; // Masquer le contenu de la conversation
-            clearInterval(conversationRefreshInterval); // Arrêter le rafraîchissement de la conversation
-            loadMatches();
-        });
+        if (matchesTab) {
+            matchesTab.addEventListener('click', function() {
+                matchesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
+                messagesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
+                if (matchesContent) matchesContent.classList.remove('hidden');
+                if (recentConversationsContent) recentConversationsContent.classList.add('hidden');
+                if (mainContent) mainContent.style.display = 'block';
+                if (conversationsContent) conversationsContent.style.display = 'none';
+                clearInterval(conversationRefreshInterval);
+                loadMatches();
+            });
+        }
 
         function loadMatches() {
             const xhr = new XMLHttpRequest();
@@ -492,17 +466,18 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
                 if (xhr.status === 200) {
                     try {
                         const matches = JSON.parse(xhr.responseText);
-                        console.log('Matches loaded:', matches);
-                        matchesContent.innerHTML = '';
-                        matches.forEach(match => {
-                            const matchElement = document.createElement('a');
-                            matchElement.href = '#';
-                            matchElement.className = 'matched-profile w-24 h-24 bg-cover bg-center rounded-xl';
-                            matchElement.style.backgroundImage = `url('${match.photos[0]}')`;
-                            matchElement.dataset.userId = match.id;
-                            matchesContent.appendChild(matchElement);
-                        });
-                        addMatchClickListeners();
+                        if (matchesContent) {
+                            matchesContent.innerHTML = '';
+                            matches.forEach(match => {
+                                const matchElement = document.createElement('a');
+                                matchElement.href = '#';
+                                matchElement.className = 'matched-profile w-24 h-24 bg-cover bg-center rounded-xl';
+                                matchElement.style.backgroundImage = `url('${match.photos[0]}')`;
+                                matchElement.dataset.userId = match.id;
+                                matchesContent.appendChild(matchElement);
+                            });
+                            addMatchClickListeners();
+                        }
                     } catch (error) {
                         console.error('Failed to parse JSON:', error);
                         console.error('Response:', xhr.responseText);
@@ -517,13 +492,34 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             xhr.send();
         }
 
+        function checkSubscription() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "../security/check_subscription.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    if (xhr.responseText.includes("Subscription updated successfully")) {
+                        location.reload(); // Recharger la page après la mise à jour
+                    }
+                } else if (xhr.readyState === 4) {
+                    console.error('Error:', xhr.status, xhr.statusText);
+                }
+            };
+            xhr.onerror = function() {
+                console.error("Request failed.");
+            };
+            xhr.send("user_id=<?php echo $_SESSION['user_id']; ?>");
+        }
+
+        // Vérifier l'abonnement toutes les minutes (60000 millisecondes)
+        setInterval(checkSubscription, 60000);
+
         function addMatchClickListeners() {
             document.querySelectorAll('.matched-profile').forEach(profile => {
                 profile.addEventListener('click', function(event) {
                     event.preventDefault();
                     const userId = this.dataset.userId;
                     currentUserId = userId;
-                    console.log('Matched profile clicked, User ID:', userId);
                     startConversation(userId);
                 });
             });
@@ -531,17 +527,17 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
 
         loadMatches();
 
-        messagesTab.addEventListener('click', function() {
-            console.log('Messages tab clicked');
-            messagesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
-            matchesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
-            matchesContent.classList.add('hidden');
-            recentConversationsContent.classList.remove('hidden');
-            mainContent.style.display = 'block';
-            conversationsContent.style.display = 'none';
-            clearInterval(conversationRefreshInterval); // Arrêter le rafraîchissement de la conversation
-            updateConversationsList();
-        });
+        if (messagesTab)
+            messagesTab.addEventListener('click', function() {
+                messagesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
+                matchesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
+                matchesContent.classList.add('hidden');
+                recentConversationsContent.classList.remove('hidden');
+                mainContent.style.display = 'block';
+                conversationsContent.style.display = 'none';
+                clearInterval(conversationRefreshInterval); // Arrêter le rafraîchissement de la conversation
+                updateConversationsList();
+            });
 
         function updateConversationsList() {
             const xhr = new XMLHttpRequest();
@@ -550,11 +546,10 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
                 if (xhr.status === 200) {
                     try {
                         const conversations = JSON.parse(xhr.responseText);
-                        console.log('Conversations loaded:', conversations);
                         recentConversationsContent.innerHTML = '';
                         conversations.forEach(conversation => {
                             const conversationElement = document.createElement('div');
-                            conversationElement.className = 'conversation p-4 bg-black rounded shadow cursor-pointer';
+                            conversationElement.className = 'conversation p-4 bg-black border-2 border-white rounded-xl shadow cursor-pointer font-bold text-transparent bg-clip-text bg-gradient-to-br from-sky_primary to-rose_primary';
                             conversationElement.dataset.conversationId = conversation.id;
                             conversationElement.dataset.userId = conversation.userId;
                             conversationElement.innerText = `Conversation with ${conversation.userName}`;
@@ -582,48 +577,48 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
                     const userId = this.dataset.userId;
                     currentUserId = userId;
                     currentConversationId = conversationId;
-                    console.log('Conversation clicked, ID:', conversationId);
                     loadConversation(conversationId);
                 });
             });
         }
 
-        closeConversationButton.addEventListener('click', function() {
-            console.log('Close conversation clicked');
-            mainContent.style.display = 'block';
-            conversationsContent.style.display = 'none';
-            clearInterval(conversationRefreshInterval);
-        });
-
-        reportButton.addEventListener('click', function() {
-            const reportReasonSelect = document.getElementById('report-reason');
-            const otherReportReasonInput = document.getElementById('other-report-reason');
-
-            reportReasonSelect.value = 'harassment';
-            otherReportReasonInput.classList.add('hidden');
-            reportModal.classList.remove('hidden');
-
-            reportReasonSelect.addEventListener('change', function() {
-                if (this.value === 'other') {
-                    otherReportReasonInput.classList.remove('hidden');
-                } else {
-                    otherReportReasonInput.classList.add('hidden');
-                }
+        if (closeConversationButton)
+            closeConversationButton.addEventListener('click', function() {
+                mainContent.style.display = 'block';
+                conversationsContent.style.display = 'none';
+                clearInterval(conversationRefreshInterval);
             });
 
-            const confirmReportButton = document.getElementById('confirm-report-user');
-            confirmReportButton.addEventListener('click', function() {
-                const reason = reportReasonSelect.value === 'other' ? otherReportReasonInput.value : reportReasonSelect.value;
+        if (reportButton)
+            reportButton.addEventListener('click', function() {
+                const reportReasonSelect = document.getElementById('report-reason');
+                const otherReportReasonInput = document.getElementById('other-report-reason');
 
-                reportProfile(currentUserId, reason);
-                reportModal.classList.add('hidden');
-            });
+                reportReasonSelect.value = 'harassment';
+                otherReportReasonInput.classList.add('hidden');
+                reportModal.classList.remove('hidden');
 
-            const cancelReportButton = document.getElementById('cancel-report-user');
-            cancelReportButton.addEventListener('click', function() {
-                reportModal.classList.add('hidden');
+                reportReasonSelect.addEventListener('change', function() {
+                    if (this.value === 'other') {
+                        otherReportReasonInput.classList.remove('hidden');
+                    } else {
+                        otherReportReasonInput.classList.add('hidden');
+                    }
+                });
+
+                const confirmReportButton = document.getElementById('confirm-report-user');
+                confirmReportButton.addEventListener('click', function() {
+                    const reason = reportReasonSelect.value === 'other' ? otherReportReasonInput.value : reportReasonSelect.value;
+
+                    reportProfile(currentUserId, reason);
+                    reportModal.classList.add('hidden');
+                });
+
+                const cancelReportButton = document.getElementById('cancel-report-user');
+                cancelReportButton.addEventListener('click', function() {
+                    reportModal.classList.add('hidden');
+                });
             });
-        });
 
         function reportProfile(userId, reason) {
             const xhr = new XMLHttpRequest();
@@ -631,7 +626,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    console.log('Profile reported:', userId);
                     location.reload();
                 } else {
                     console.error('Error reporting profile:', xhr.statusText, xhr.responseText);
@@ -643,10 +637,11 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             xhr.send('user_id=' + userId + '&reason=' + encodeURIComponent(reason));
         }
 
-        blockButton.addEventListener('click', function() {
-            currentAction = 'block';
-            modalTitle.textContent = 'Bloquer le profil';
-            modalContent.innerHTML = `
+        if (blockButton)
+            blockButton.addEventListener('click', function() {
+                currentAction = 'block';
+                modalTitle.textContent = 'Bloquer le profil';
+                modalContent.innerHTML = `
             <p>Êtes-vous sûr de vouloir bloquer ce profil ?</p>
             <select id="block-reason" class="w-full p-2 border rounded">
                 <option value="harassment">Harcèlement</option>
@@ -656,31 +651,31 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             </select>
             <input type="text" id="other-reason" class="w-full p-2 border rounded hidden" placeholder="Votre raison">
         `;
-            blockModal.classList.remove('hidden');
+                blockModal.classList.remove('hidden');
 
-            const blockReasonSelect = document.getElementById('block-reason');
-            const otherReasonInput = document.getElementById('other-reason');
+                const blockReasonSelect = document.getElementById('block-reason');
+                const otherReasonInput = document.getElementById('other-reason');
 
-            blockReasonSelect.addEventListener('change', function() {
-                if (this.value === 'other') {
-                    otherReasonInput.classList.remove('hidden');
-                } else {
-                    otherReasonInput.classList.add('hidden');
-                }
+                blockReasonSelect.addEventListener('change', function() {
+                    if (this.value === 'other') {
+                        otherReasonInput.classList.remove('hidden');
+                    } else {
+                        otherReasonInput.classList.add('hidden');
+                    }
+                });
+
+                const confirmBlockButton = document.getElementById('confirm-block-user');
+                confirmBlockButton.addEventListener('click', function() {
+                    const reason = blockReasonSelect.value === 'other' ? otherReasonInput.value : blockReasonSelect.value;
+                    blockProfile(currentUserId, currentConversationId, reason);
+                    blockModal.classList.add('hidden');
+                });
+
+                const cancelBlockButton = document.getElementById('cancel-block-user');
+                cancelBlockButton.addEventListener('click', function() {
+                    blockModal.classList.add('hidden');
+                });
             });
-
-            const confirmBlockButton = document.getElementById('confirm-block-user');
-            confirmBlockButton.addEventListener('click', function() {
-                const reason = blockReasonSelect.value === 'other' ? otherReasonInput.value : blockReasonSelect.value;
-                blockProfile(currentUserId, currentConversationId, reason);
-                blockModal.classList.add('hidden');
-            });
-
-            const cancelBlockButton = document.getElementById('cancel-block-user');
-            cancelBlockButton.addEventListener('click', function() {
-                blockModal.classList.add('hidden');
-            });
-        });
 
         function blockProfile(userId, conversationId, reason) {
             const xhr = new XMLHttpRequest();
@@ -688,7 +683,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    console.log('Profile blocked:', userId);
                     mainContent.style.display = 'block';
                     conversationsContent.style.display = 'none';
                     location.reload();
@@ -704,7 +698,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
 
 
         function startConversation(userId) {
-            console.log('Starting conversation with user ID:', userId);
             messagesTab.classList.add('underline', 'decoration-wavy', 'decoration-gradient');
             matchesTab.classList.remove('underline', 'decoration-wavy', 'decoration-gradient');
             matchesContent.classList.add('hidden');
@@ -720,19 +713,15 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             });
 
             if (conversationId) {
-                console.log('Existing conversation found, ID:', conversationId);
                 loadConversation(conversationId);
             } else {
-                console.log('No existing conversation, creating new');
                 const xhr = new XMLHttpRequest();
                 xhr.open('POST', '../action/start_conversation.php', true);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onload = function() {
-                    console.log('start_conversation response status:', xhr.status);
                     if (xhr.status === 200) {
                         try {
                             const response = JSON.parse(xhr.responseText);
-                            console.log('Parsed response:', response);
                             loadConversation(response.conversation_id);
                             currentConversationId = response.conversation_id;
                             updateConversationsList(); // Add this line
@@ -751,7 +740,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
         }
 
         function loadConversation(conversationId) {
-            console.log('Loading conversation ID:', conversationId);
             mainContent.style.display = 'none';
             conversationsContent.style.display = 'block';
             recentConversationsContent.classList.remove('hidden');
@@ -759,16 +747,14 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             const xhr = new XMLHttpRequest();
             xhr.open('GET', '../action/get_messages.php?conversation_id=' + conversationId, true);
             xhr.onload = function() {
-                console.log('get_messages response status:', xhr.status);
                 if (xhr.status === 200) {
                     try {
                         const messages = JSON.parse(xhr.responseText);
-                        console.log('Parsed messages:', messages);
                         const messagesList = document.getElementById('messages-list');
                         messagesList.innerHTML = '';
                         messages.forEach(message => {
                             const messageElement = document.createElement('div');
-                            messageElement.classList.add('flex', 'items-end', 'space-y-4');
+                            messageElement.classList.add('flex', 'items-end', 'space-y-10');
                             if (message.sender_id == <?php echo json_encode($currentUserId); ?>) {
                                 messageElement.classList.add('justify-end');
                                 messageElement.innerHTML = `
@@ -824,7 +810,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             document.querySelectorAll('.delete-message').forEach(button => {
                 button.addEventListener('click', function() {
                     const messageId = this.getAttribute('data-message-id');
-                    console.log('Delete message clicked, ID:', messageId);
                     deleteMessage(messageId);
                 });
             });
@@ -836,7 +821,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onload = function() {
                 if (xhr.status === 200) {
-                    console.log('Message deleted:', messageId);
                     const activeConversation = document.querySelector('.conversation.active');
                     if (activeConversation) {
                         loadConversation(activeConversation.getAttribute('data-conversation-id'));
@@ -855,7 +839,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             event.preventDefault();
             const messageInput = document.getElementById('message-input');
             const message = messageInput.value;
-            console.log('Message form submitted, message:', message);
 
             if (message.trim() === '') return;
 
@@ -871,11 +854,9 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
             xhr.open('POST', '../action/send_message.php', true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.onload = function() {
-                console.log('send_message response status:', xhr.status);
                 if (xhr.status === 200) {
                     try {
                         const response = JSON.parse(xhr.responseText);
-                        console.log('Parsed response:', response);
                         if (response.status === 'success') {
                             loadConversation(conversationId);
                             messageInput.value = '';
@@ -898,15 +879,12 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
         document.getElementById('search-form').addEventListener('submit', function(event) {
             event.preventDefault();
             var keyword = document.getElementById('simple-search').value;
-            console.log('Searching for:', keyword);
 
             var xhr = new XMLHttpRequest();
             xhr.open('GET', 'search.php?keyword=' + encodeURIComponent(keyword), true);
 
             xhr.onload = function() {
-                console.log('search response status:', xhr.status);
                 if (xhr.status === 200) {
-                    console.log('Response received:', xhr.responseText);
                     document.getElementById('results').innerHTML = xhr.responseText;
                     document.getElementById('initial-content').style.display = 'none';
                 } else {
@@ -944,7 +922,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
         displayCurrentCard();
 
         nextButton.addEventListener('click', () => {
-            console.log('Next button clicked');
             if (currentIndex < userCards.length - 1) {
                 currentIndex++;
                 displayCurrentCard();
@@ -952,7 +929,6 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
         });
 
         prevButton.addEventListener('click', () => {
-            console.log('Prev button clicked');
             if (currentIndex > 0) {
                 currentIndex--;
                 displayCurrentCard();

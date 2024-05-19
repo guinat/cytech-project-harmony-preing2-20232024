@@ -12,7 +12,6 @@
 
 <!-- Form to complete the profile -->
 <form action="/src/security/profileCompletion.php" method="POST" enctype="multipart/form-data" class="flex min-h-screen">
-
     <!-------------------------- PERSONAL DETAILS SECTION --------------------------->
     <section class="px-8 pt-6 pb-8 mb-4 items-center justify-center max-w-3xl" id="personalDetails">
         <!-------------------------- REQUIRED --------------------------->
@@ -27,14 +26,14 @@
                 <label class="block text-sm font-bold mb-2" for="first_name">
                     First Name <span class="font-bold text-red-600">*</span>
                 </label>
-                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="first_name" name="first_name" type="text" placeholder="Jean" value="<?php echo htmlspecialchars($_SESSION['form_values']['first_name'] ?? '') ?>">
+                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="first_name" name="first_name" type="text" placeholder="Jean" value="<?php echo htmlspecialchars($_SESSION['first_name'] ?? '') ?>">
             </div>
             <!-- LAST NAME -->
             <div class="w-full px-3 mb-4">
                 <label class="block text-sm font-bold mb-2" for="last_name">
                     Last Name <span class="font-bold text-red-600">*</span>
                 </label>
-                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="last_name" name="last_name" type="text" placeholder="Dupont" value="<?php echo htmlspecialchars($_SESSION['form_values']['last_name'] ?? '') ?>">
+                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" id="last_name" name="last_name" type="text" placeholder="Dupont" value="<?php echo htmlspecialchars($_SESSION['last_name'] ?? '') ?>">
             </div>
             <!-- GENDER -->
             <div class="w-full px-3 mb-4">
@@ -44,7 +43,7 @@
                 <ul class="grid gap-4 grid-cols-3 md:w-1/2">
                     <!-- Male -->
                     <li>
-                        <input type="radio" id="genderMale" name="gender" value="Male" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['gender'] == 'Male') ? 'checked' : ''; ?>>
+                        <input type="radio" id="genderMale" name="gender" value="Male" class="hidden peer" <?php echo (isset($_SESSION['gender']) && $_SESSION['gender'] == 'Male') ? 'checked' : ''; ?>>
                         <label for="genderMale" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Male</div>
@@ -53,7 +52,7 @@
                     </li>
                     <!-- Female -->
                     <li>
-                        <input type="radio" id="genderFemale" name="gender" value="Female" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['gender'] == 'Female') ? 'checked' : ''; ?>>
+                        <input type="radio" id="genderFemale" name="gender" value="Female" class="hidden peer" <?php echo (isset($_SESSION['gender']) && $_SESSION['gender'] == 'Female') ? 'checked' : ''; ?>>
                         <label for="genderFemale" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Female</div>
@@ -62,7 +61,7 @@
                     </li>
                     <!-- Other -->
                     <li>
-                        <input type="radio" id="genderOther" name="gender" value="Other" class="hidden peer" <?php echo (isset($_SESSION['form_values']['gender']) && $_SESSION['form_values']['gender'] == 'Other') ? 'checked' : ''; ?>>
+                        <input type="radio" id="genderOther" name="gender" value="Other" class="hidden peer" <?php echo (isset($_SESSION['gender']) && $_SESSION['gender'] == 'Other') ? 'checked' : ''; ?>>
                         <label for="genderOther" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Other</div>
@@ -77,9 +76,9 @@
                     Date of Birth <span class="font-bold text-red-600">*</span>
                 </label>
                 <div class="flex gap-4">
-                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-32" type="number" placeholder="YYYY" name="birth_year" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_year'] ?? '') ?>">
-                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-24" type="number" placeholder="MM" name="birth_month" max="12" min="1" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_month'] ?? '') ?>">
-                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-24" type="number" placeholder="DD" name="birth_day" max="31" min="1" value="<?php echo htmlspecialchars($_SESSION['form_values']['birth_day'] ?? '') ?>">
+                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-32" type="number" placeholder="YYYY" name="birth_year" value="<?php echo htmlspecialchars($_SESSION['birth_year'] ?? '') ?>">
+                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-24" type="number" placeholder="MM" name="birth_month" max="12" min="1" value="<?php echo htmlspecialchars($_SESSION['birth_month'] ?? '') ?>">
+                    <input class="bg-black border border-medium_gray rounded-lg py-2 px-3 leading-tight focus:outline-none focus:border-white w-24" type="number" placeholder="DD" name="birth_day" max="31" min="1" value="<?php echo htmlspecialchars($_SESSION['birth_day'] ?? '') ?>">
                 </div>
             </div>
             <!-- COUNTRY -->
@@ -88,11 +87,11 @@
                     Select a country <span class="font-bold text-red-600">*</span>
                 </label>
                 <select class="border-medium_gray border bg-black rounded-md w-full py-2 px-3 text-white leading-tight focus:outline-none focus:border-white" id="country" name="country">
-                    <option value="" <?php echo (!isset($_SESSION['form_values']['country']) || $_SESSION['form_values']['country'] === "") ? "selected" : ""; ?>>Choose a country</option>
-                    <option value="US" <?php echo (isset($_SESSION['form_values']['country']) && $_SESSION['form_values']['country'] === "US") ? "selected" : ""; ?>>United States</option>
-                    <option value="CA" <?php echo (isset($_SESSION['form_values']['country']) && $_SESSION['form_values']['country'] === "CA") ? "selected" : ""; ?>>Canada</option>
-                    <option value="FR" <?php echo (isset($_SESSION['form_values']['country']) && $_SESSION['form_values']['country'] === "FR") ? "selected" : ""; ?>>France</option>
-                    <option value="DE" <?php echo (isset($_SESSION['form_values']['country']) && $_SESSION['form_values']['country'] === "DE") ? "selected" : ""; ?>>Germany</option>
+                    <option value="" <?php echo (!isset($_SESSION['country']) || $_SESSION['country'] === "") ? "selected" : ""; ?>>Choose a country</option>
+                    <option value="US" <?php echo (isset($_SESSION['country']) && $_SESSION['country'] === "US") ? "selected" : ""; ?>>United States</option>
+                    <option value="CA" <?php echo (isset($_SESSION['country']) && $_SESSION['country'] === "CA") ? "selected" : ""; ?>>Canada</option>
+                    <option value="FR" <?php echo (isset($_SESSION['country']) && $_SESSION['country'] === "FR") ? "selected" : ""; ?>>France</option>
+                    <option value="DE" <?php echo (isset($_SESSION['country']) && $_SESSION['country'] === "DE") ? "selected" : ""; ?>>Germany</option>
                 </select>
             </div>
             <!-- CITY -->
@@ -100,7 +99,7 @@
                 <label class="block text-sm font-bold mb-2" for="city">
                     City <span class="font-bold text-red-600">*</span>
                 </label>
-                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" type="text" placeholder="London" id="city" name="city" value="<?php echo htmlspecialchars($_SESSION['form_values']['city'] ?? '') ?>">
+                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" type="text" placeholder="London" id="city" name="city" value="<?php echo htmlspecialchars($_SESSION['city'] ?? '') ?>">
             </div>
             <!-- LOOKING FOR -->
             <div class="w-full px-3 mb-4">
@@ -110,7 +109,7 @@
                 <ul class="grid gap-4 grid-cols-3 md:w-1/2">
                     <!-- Male -->
                     <li>
-                        <input type="radio" id="lookingForMale" name="looking_for" value="Male" class="hidden peer" <?php echo (isset($_SESSION['form_values']['looking_for']) && $_SESSION['form_values']['looking_for'] == 'Male') ? 'checked' : ''; ?>>
+                        <input type="radio" id="lookingForMale" name="looking_for" value="Male" class="hidden peer" <?php echo (isset($_SESSION['looking_for']) && $_SESSION['looking_for'] == 'Male') ? 'checked' : ''; ?>>
                         <label for="lookingForMale" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Male</div>
@@ -119,7 +118,7 @@
                     </li>
                     <!-- Female -->
                     <li>
-                        <input type="radio" id="lookingForFemale" name="looking_for" value="Female" class="hidden peer" <?php echo (isset($_SESSION['form_values']['looking_for']) && $_SESSION['form_values']['looking_for'] == 'Female') ? 'checked' : ''; ?>>
+                        <input type="radio" id="lookingForFemale" name="looking_for" value="Female" class="hidden peer" <?php echo (isset($_SESSION['looking_for']) && $_SESSION['looking_for'] == 'Female') ? 'checked' : ''; ?>>
                         <label for="lookingForFemale" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Female</div>
@@ -128,7 +127,7 @@
                     </li>
                     <!-- Both -->
                     <li>
-                        <input type="radio" id="lookingForBoth" name="looking_for" value="Both" class="hidden peer" <?php echo (isset($_SESSION['form_values']['looking_for']) && $_SESSION['form_values']['looking_for'] == 'Both') ? 'checked' : ''; ?>>
+                        <input type="radio" id="lookingForBoth" name="looking_for" value="Both" class="hidden peer" <?php echo (isset($_SESSION['looking_for']) && $_SESSION['looking_for'] == 'Both') ? 'checked' : ''; ?>>
                         <label for="lookingForBoth" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Both</div>
@@ -151,7 +150,7 @@
                 <label class="block text-sm font-bold mb-2" for="occupation">
                     Occupation
                 </label>
-                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" type="text" placeholder="Engineer" id="occupation" name="occupation" value="<?php echo htmlspecialchars($_SESSION['form_values']['occupation'] ?? '') ?>">
+                <input class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" type="text" placeholder="Engineer" id="occupation" name="occupation" value="<?php echo htmlspecialchars($_SESSION['occupation'] ?? '') ?>">
             </div>
             <!-- SMOKING STATUS -->
             <div class="w-full px-3 mb-4">
@@ -161,7 +160,7 @@
                 <ul class="grid gap-4 grid-cols-3 md:w-1/2">
                     <!-- Yes -->
                     <li>
-                        <input type="radio" id="smokingYes" name="smoking" value="Yes" class="hidden peer" <?php echo (isset($_SESSION['form_values']['smoking']) && $_SESSION['form_values']['smoking'] == 'Yes') ? 'checked' : ''; ?>>
+                        <input type="radio" id="smokingYes" name="smoking" value="Yes" class="hidden peer" <?php echo (isset($_SESSION['smoking_status']) && $_SESSION['smoking_status'] == 'Yes') ? 'checked' : ''; ?>>
                         <label for="smokingYes" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">Yes</div>
@@ -170,7 +169,7 @@
                     </li>
                     <!-- No -->
                     <li>
-                        <input type="radio" id="smokingNo" name="smoking" value="No" class="hidden peer" <?php echo (isset($_SESSION['form_values']['smoking']) && $_SESSION['form_values']['smoking'] == 'No') ? 'checked' : ''; ?>>
+                        <input type="radio" id="smokingNo" name="smoking" value="No" class="hidden peer" <?php echo (isset($_SESSION['smoking_status']) && $_SESSION['smoking_status'] == 'No') ? 'checked' : ''; ?>>
                         <label for="smokingNo" class="inline-flex items-center px-6 py-2 text-medium_gray bg-black border-2 border-medium_gray hover:border-white hover:text-white rounded-full cursor-pointer peer-checked:border-white peer-checked:text-transparent peer-checked:bg-clip-text peer-checked:bg-gradient-to-br peer-checked:from-sky_primary peer-checked:to-rose_primary">
                             <div class="flex items-center justify-center w-full">
                                 <div class="text-sm font-semibold">No</div>
@@ -180,7 +179,7 @@
                 </ul>
             </div>
             <!-- HOBBIES -->
-            <input type="hidden" id="hiddenHobbiesInput" name="hobbies" value="<?php echo htmlspecialchars($_SESSION['form_values']['hobbies'] ?? '') ?>">
+            <input type="hidden" id="hiddenHobbiesInput" name="hobbies" value="<?php echo htmlspecialchars($_SESSION['hobbies'] ?? '') ?>">
             <div class="w-full px-3 mb-4">
                 <label class="block text-sm font-bold mb-2">Hobbies</label>
                 <div class="flex flex-wrap gap-1">
@@ -193,7 +192,7 @@
                 <label class="block text-sm font-bold mb-2" for="about_me">
                     About me
                 </label>
-                <textarea class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" placeholder="Tell us something about you" rows="4" id="about_me" name="about_me"><?php echo htmlspecialchars($_SESSION['form_values']['about_me'] ?? '') ?></textarea>
+                <textarea class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white" placeholder="Tell us something about you" rows="4" id="about_me" name="about_me"><?php echo htmlspecialchars($_SESSION['about_me'] ?? '') ?></textarea>
             </div>
         </div>
         <!-- NEXT STEP BUTTON -->
@@ -277,7 +276,7 @@
     <section id="MusicForm" class="hidden">
         <div class="container mx-auto px-4 my-8">
             <div id="musicGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10"></div>
-            <input type="hidden" id="hiddenMusicInput" name="selected_music" value="<?php echo htmlspecialchars($_SESSION['form_values']['selected_music'] ?? '') ?>">
+            <input type="hidden" id="hiddenMusicInput" name="selected_music" value="<?php echo htmlspecialchars($_SESSION['selected_music'] ?? '') ?>">
         </div>
         <p class="text-medium_gray font-semibold text-base text-center w-full">Select at least one music genre to start</p>
         <div class="flex flex-row gap-6 md:gap-24 justify-center mt-24 mb-24">
@@ -335,7 +334,7 @@
     ];
 
     // Retrieve selected music titles from session and split them into an array
-    const selectedMusicTitles = "<?php echo $_SESSION['form_values']['selected_music'] ?? ''; ?>".split(',').map(m => m.trim());
+    const selectedMusicTitles = "<?php echo $_SESSION['selected_music'] ?? ''; ?>".split(',').map(m => m.trim());
 
     class MusicCard {
         // Constructor to initialize the MusicCard class with container ID, music list, and selected titles
@@ -432,7 +431,7 @@
 
     // Handle hobbies selection and update hidden input field
     document.addEventListener('DOMContentLoaded', function() {
-        const selectedHobbies = "<?php echo htmlspecialchars($_SESSION['form_values']['hobbies'] ?? ''); ?>".split(',').filter(h => h.trim().length > 0);
+        const selectedHobbies = "<?php echo htmlspecialchars($_SESSION['hobbies'] ?? ''); ?>".split(',').filter(h => h.trim().length > 0);
 
         const badges = document.querySelectorAll('.hobby-badge');
         badges.forEach(badge => {

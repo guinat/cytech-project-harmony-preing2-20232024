@@ -32,24 +32,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $subscriptionEndTimestamp = strtotime($subscriptionEndDate);
             $currentTimestamp = strtotime($currentDate);
 
-            // Adding logs to check the values
-            error_log("Subscription End Date: " . $subscriptionEndDate);
-            error_log("Current Date: " . $currentDate);
-            error_log("Subscription End Timestamp: " . $subscriptionEndTimestamp);
-            error_log("Current Timestamp: " . $currentTimestamp);
-
             // Checking if the subscription has expired
             if ($subscriptionEndTimestamp < $currentTimestamp) {
                 // Updating user subscription details
+                $user->setRole('ROLE_USER');
                 $user->setSubscription('');
                 $user->setSubscriptionStartDate(null);
                 $user->setSubscriptionEndDate(null);
 
                 // Data to update in the CSV file
                 $dataToUpdate = [
-                    22 => '', // Subscription
-                    23 => '', // Subscription Start Date
-                    24 => ''  // Subscription End Date
+                    6 => $user->getRole(), // Role
+                    23 => '', // Subscription
+                    24 => '', // Subscription Start Date
+                    25 => ''  // Subscription End Date
                 ];
 
                 // Updating user profile in the CSV file

@@ -56,20 +56,16 @@ function searchProfiles($profiles, $keyword)
 // Get the search keyword from the URL parameters
 $keyword = isset($_GET['keyword']) ? $_GET['keyword'] : '';
 if ($keyword) {
-    // Debug: Output the search keyword
-    echo '<p>Debug: Searching for keyword "' . htmlspecialchars($keyword) . '".</p>';
     // Load profiles from the CSV file
     $profiles = loadProfiles('../data/users.csv');
     if ($profiles) {
-        // Debug: Confirm profiles loaded successfully
-        echo '<p>Debug: Profiles loaded successfully.</p>';
         // Search profiles for the keyword
         $results = searchProfiles($profiles, $keyword);
         // Check if any results were found
         if (count($results) > 0) : ?>
             <div class="flex flex-wrap justify-center gap-4">
                 <?php foreach ($results as $result) : ?>
-                    <div class="text-white bg-black rounded-lg shadow-lg p-4 w-[290px] md:w-[330px]">
+                    <a href="profile.php?id=<?php echo htmlspecialchars($result['id']); ?>" class="text-white bg-black rounded-lg shadow-lg p-4 w-[290px] md:w-[330px]">
                         <!-- Display profile image -->
                         <div class="bg-cover bg-center h-48 rounded-t-lg" style="background-image: url('<?php echo htmlspecialchars($result['require_photo_1']); ?>');"></div>
                         <div class="p-4">
@@ -80,7 +76,7 @@ if ($keyword) {
                             <p class="text-sm">Hobbies: <?php echo htmlspecialchars($result['hobbies']); ?></p>
                             <p class="text-sm">About Me: <?php echo htmlspecialchars($result['about_me']); ?></p>
                         </div>
-                    </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
         <?php else : ?>
