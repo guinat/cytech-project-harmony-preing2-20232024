@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $startDate = date('Y-m-d H:i:s');
             $endDate = null;
             if ($subscription === '1week') {
-                $endDate = date('Y-m-d H:i:s', strtotime('+1 week'));
+                $endDate = date('Y-m-d H:i:s', strtotime('+2 minutes'));
             } elseif ($subscription === '1month') {
                 $endDate = date('Y-m-d H:i:s', strtotime('+1 month'));
             } elseif ($subscription === '6months') {
@@ -43,21 +43,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user->setSubscription($subscription);
             $user->setSubscriptionStartDate($startDate);
             $user->setSubscriptionEndDate($endDate);
+            $user->setRole('ROLE_PULSE');
 
             // Storing subscription start and end date in session
             $_SESSION['subscription_start_date'] = $startDate;
             $_SESSION['subscription_end_date'] = $endDate;
+            $_SESSION['role'] = $user->getRole();
 
             // Data to update in the CSV file
             $dataToUpdate = [
                 2 => $user->getUpdatedAt(),
-                22 => $user->getSubscription(),
-                23 => $user->getSubscriptionStartDate(),
-                24 => $user->getSubscriptionEndDate()
+                6 => $user->getRole(),
+                23 => $user->getSubscription(),
+                24 => $user->getSubscriptionStartDate(),
+                25 => $user->getSubscriptionEndDate()
             ];
-
-            // Debug log
-            error_log("Updating user profile with: " . print_r($dataToUpdate, true));
 
             // Updating user profile in the CSV file
             $dataUpdated = updateUserProfile($userId, $dataToUpdate, $csvFile);

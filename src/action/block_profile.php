@@ -17,10 +17,11 @@ include_once '../entity/user.php'; // Include the user entity file
 function deleteConversation($conversationId)
 {
     $conversationsFile = '../data/conversations.csv'; // Path to the conversations CSV file
-    $tempFile = '../data/temp_conversations.csv'; // Temporary file for rewriting
+    $tempConversationsFile = '../data/temp_conversations.csv'; // Temporary file for rewriting conversations
     $deletedConversationsFile = '../data/deleted_conversations.csv'; // Path to the deleted conversations CSV file
-    $deletedMessagesFile = '../data/deleted_messages.csv'; // Path to the deleted messages CSV file
     $messagesFile = '../data/messages.csv'; // Path to the messages CSV file
+    $tempMessagesFile = '../data/temp_messages.csv'; // Temporary file for rewriting messages
+    $deletedMessagesFile = '../data/deleted_messages.csv'; // Path to the deleted messages CSV file
     $userId = $_SESSION['user_id']; // Get the user ID from the session
 
     $conversationData = null; // Initialize variable to hold the conversation data
@@ -28,7 +29,7 @@ function deleteConversation($conversationId)
 
     // Read the conversations file and find the conversation to delete
     if (($input = fopen($conversationsFile, 'r')) !== FALSE) {
-        $output = fopen($tempFile, 'w'); // Open the temporary file for writing
+        $output = fopen($tempConversationsFile, 'w'); // Open the temporary file for writing
         while (($data = fgetcsv($input, 1000, ",")) !== FALSE) {
             if ($data[0] == $conversationId) {
                 $conversationData = $data; // Save the conversation data
@@ -38,7 +39,7 @@ function deleteConversation($conversationId)
         }
         fclose($input); // Close the input file
         fclose($output); // Close the output file
-        rename($tempFile, $conversationsFile); // Rename the temporary file to the original file
+        rename($tempConversationsFile, $conversationsFile); // Rename the temporary file to the original file
     }
 
     // If the conversation was found and deleted, log it in deleted_conversations.csv
@@ -50,7 +51,7 @@ function deleteConversation($conversationId)
 
         // Delete messages related to the conversation
         if (($input = fopen($messagesFile, 'r')) !== FALSE) {
-            $output = fopen($tempFile, 'w'); // Open the temporary file for writing
+            $output = fopen($tempMessagesFile, 'w'); // Open the temporary file for writing
             while (($data = fgetcsv($input, 1000, ",")) !== FALSE) {
                 if ($data[1] == $conversationId) {
                     $messages[] = $data; // Save the message data
@@ -60,7 +61,7 @@ function deleteConversation($conversationId)
             }
             fclose($input); // Close the input file
             fclose($output); // Close the output file
-            rename($tempFile, $messagesFile); // Rename the temporary file to the original file
+            rename($tempMessagesFile, $messagesFile); // Rename the temporary file to the original file
         }
 
         // Log the deleted messages in deleted_messages.csv
@@ -128,6 +129,26 @@ function addBlockedUser($userId, $blockedUserId, $reason)
     }
 }
 
+// Function to delete a match between the user and the blocked user
+function deleteMatch($userId, $blockedUserId)
+{
+    $matchesFile = '../data/matches.csv'; // Path to the matches CSV file
+    $tempFile = '../data/temp_matches.csv'; // Temporary file for rewriting
+
+    if (($input = fopen($matchesFile, 'r')) !== FALSE) {
+        $output = fopen($tempFile, 'w'); // Open the temporary file for writing
+        while (($data = fgetcsv($input, 1000, ",")) !== FALSE) {
+            // Skip matches between the user and the blocked user
+            if (!($data[0] == $userId && $data[1] == $blockedUserId) && !($data[0] == $blockedUserId && $data[1] == $userId)) {
+                fputcsv($output, $data); // Write other matches to the temporary file
+            }
+        }
+        fclose($input); // Close the input file
+        fclose($output); // Close the output file
+        rename($tempFile, $matchesFile); // Rename the temporary file to the original file
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $userId = $_SESSION['user_id']; // Get the user ID from the session
     $blockedUserId = $_POST['user_id']; // Get the blocked user ID from the POST request
@@ -142,6 +163,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Delete likes
     deleteLike($userId, $blockedUserId);
+
+    // Delete Match
+    deleteMatch($userId, $blockedUserId);
 
     // Delete visits
     deleteVisit($userId, $blockedUserId);

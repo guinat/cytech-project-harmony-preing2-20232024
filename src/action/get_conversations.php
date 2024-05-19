@@ -59,12 +59,12 @@ $response = [];
 foreach ($conversations as $conversation) {
     $conversationId = $conversation[0];
     $userId = ($conversation[1] == $currentUserId) ? $conversation[2] : $conversation[1];
-    $user = getUserById($userId, '../data/users.csv');
+    $user = getUser($userId, '../data/users.csv');
     if ($user) {
         $response[] = [
             'id' => $conversationId,
             'userId' => $user->getId(),
-            'userName' => $user->getFirstName() . ' ' . $user->getLastName(),
+            'userName' => $user->getFirstName(),
             'lastMessageDate' => $conversation[3] // Assuming column 3 is the creation date
         ];
     }

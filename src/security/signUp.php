@@ -8,6 +8,7 @@ session_start();
 // Checking if the request method is POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieving username, password, and confirm password from the POST data
+    $email = $_POST['email'];
     $username = $_POST['username'];
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirm_password'];
@@ -24,12 +25,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // Creating a new user with the provided username and password
-        $user = createUser($username, $password);
+        $user = createUser($email, $username, $password, 'ROLE_USER');
 
         if ($user) {
             // If user creation is successful, storing user details in session
             $_SESSION['user_id'] = $user->getId();
+            $_SESSION['email'] = $user->getEmail();
             $_SESSION['username'] = $user->getUsername();
+            $_SESSION['role'] = $user->getRole();
 
             // Redirecting to the profile completion page
             header('Location: /src/pages/profileCompletion.php');

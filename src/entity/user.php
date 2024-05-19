@@ -5,8 +5,10 @@ class UserEntity
     private $id;
     private $created_at;
     private $updated_at;
+    private $email;
     private $username;
     private $password;
+    private $role;
     private $firstName;
     private $lastName;
     private $gender;
@@ -25,13 +27,15 @@ class UserEntity
     private $subscriptionEndDate;
 
     // Constructor
-    public function __construct($id, $username, $password)
+    public function __construct($id, $email, $username, $password, $role)
     {
         $this->id = $id;
         $this->created_at = date('Y-m-d H:i:s');
         $this->updated_at = null;
+        $this->setEmail($email);
         $this->setUsername($username);
         $this->setPassword($password);
+        $this->role = $role; // Default role
         $this->firstName = '';
         $this->lastName = '';
         $this->gender = '';
@@ -63,6 +67,10 @@ class UserEntity
     {
         return $this->updated_at;
     }
+    public function getEmail()
+    {
+        return $this->email;
+    }
     public function getUsername()
     {
         return $this->username;
@@ -70,6 +78,10 @@ class UserEntity
     public function getPassword()
     {
         return $this->password;
+    }
+    public function getRole()
+    {
+        return $this->role;
     }
     public function getFirstName()
     {
@@ -142,6 +154,14 @@ class UserEntity
         $this->updated_at = $date;
     }
 
+    public function setEmail($email)
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Invalid email format.");
+        }
+        $this->email = $email;
+    }
+
     public function setUsername($username)
     {
         if (empty($username)) {
@@ -156,6 +176,15 @@ class UserEntity
             throw new Exception("The password does not meet the security criteria.");
         }
         $this->password = password_hash($password, PASSWORD_DEFAULT);
+    }
+
+    public function setRole($role)
+    {
+        $validRoles = ['ROLE_USER', 'ROLE_PULSE', 'ROLE_ADMIN'];
+        if (!in_array($role, $validRoles)) {
+            throw new Exception("Invalid role.");
+        }
+        $this->role = $role;
     }
 
     public function setFirstName($firstName)
@@ -331,7 +360,7 @@ function usernameExists($username, $csvFile)
 {
     if (($handle = fopen($csvFile, 'r')) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            if ($data[3] == $username) { // Assuming username is at index 3
+            if ($data[4] == $username) {
                 fclose($handle);
                 return true;
             }
@@ -341,13 +370,42 @@ function usernameExists($username, $csvFile)
     return false;
 }
 
+function emailExists($email, $csvFile)
+{
+    if (($handle = fopen($csvFile, 'r')) !== FALSE) {
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            if ($data[3] == $email) {
+                fclose($handle);
+                return true;
+            }
+        }
+        fclose($handle);
+    }
+    return false;
+}
+
+function isEmailBanned($email, $csvFile)
+{
+    if (($handle = fopen($csvFile, 'r')) !== FALSE) {
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            if ($data[0] == $email) {
+                fclose($handle);
+                return true;
+            }
+        }
+        fclose($handle);
+    }
+    return false;
+}
+
+
 // Function to get the last user ID in the CSV file
 function getLastUserId($csvFile)
 {
     $lastId = 0;
     if (($handle = fopen($csvFile, 'r')) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-            $lastId = (int)$data[0]; // Assuming user ID is at index 0
+            $lastId = (int)$data[0];
         }
         fclose($handle);
     }
@@ -355,17 +413,24 @@ function getLastUserId($csvFile)
 }
 
 // Function to create a new user
-function createUser($username, $password)
+function createUser($email, $username, $password, $role)
 {
     $csvFile = '../data/users.csv';
 
     if (usernameExists($username, $csvFile)) {
         throw new Exception("This username is already taken.");
     }
+    if (emailExists($email, $csvFile)) {
+        throw new Exception("This email is already taken.");
+    }
+
+    if (isEmailBanned($email, '../data/blacklist.csv')) {
+        throw new Exception("This email is banned.");
+    }
 
     $lastId = getLastUserId($csvFile) + 1;
 
-    $user = new UserEntity($lastId, $username, $password);
+    $user = new UserEntity($lastId, $email, $username, $password, $role);
     $user->setUpdatedAt(date('Y-m-d H:i:s'));
 
     if (($handle = fopen($csvFile, 'a')) !== FALSE) {
@@ -373,8 +438,10 @@ function createUser($username, $password)
             $user->getId(),
             $user->getCreatedAt(),
             $user->getUpdatedAt(),
+            $user->getEmail(),
             $user->getUsername(),
             $user->getPassword(),
+            $user->getRole(),
             $user->getFirstName(),
             $user->getLastName(),
             $user->getGender(),
@@ -441,8 +508,11 @@ function getUserById($userId, $csvFile)
             if ($data[0] == $userId) {
                 $user = new UserEntity(
                     $data[0], // User ID
-                    $data[3], // Username
-                    $data[4]  // Password
+                    $data[3], // Email
+                    $data[4], // Username
+                    $data[5],  // Password
+                    $data[6]  // Role
+
                 );
                 fclose($handle);
                 return $user;
@@ -461,23 +531,24 @@ function getUser($userId, $csvFilePath)
         fgetcsv($handle); // Skip header row
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
             if ($data[0] == $userId) {
-                $user = new UserEntity($data[0], $data[3], $data[4]);
-                if (isset($data[6])) $user->setFirstName($data[6]);
-                if (isset($data[7])) $user->setLastName($data[7]);
-                if (isset($data[8])) $user->setGender($data[8]);
-                if (isset($data[9])) $user->setDateOfBirth($data[9]);
-                if (isset($data[10])) $user->setCountry($data[10]);
-                if (isset($data[11])) $user->setCity($data[11]);
-                if (isset($data[12])) $user->setLookingFor($data[12]);
-                if (isset($data[13])) $user->setMusicPreferences($data[13]);
-                if (isset($data[14])) $user->setPhotos(array_slice($data, 14, 4));
-                if (isset($data[18])) $user->setOccupation($data[18]);
-                if (isset($data[19])) $user->setSmokingStatus($data[19]);
-                if (isset($data[20])) $user->setHobbies($data[20]);
-                if (isset($data[21])) $user->setAboutMe($data[21]);
-                if (isset($data[22])) $user->setSubscription($data[22]);
-                if (isset($data[23])) $user->setSubscriptionStartDate($data[23]);
-                if (isset($data[24])) $user->setSubscriptionEndDate($data[24]);
+                $user = new UserEntity($data[0], $data[3], $data[4], $data[5], $data[6]);
+                if (isset($data[6])) $user->setRole($data[6]);
+                if (isset($data[7])) $user->setFirstName($data[7]);
+                if (isset($data[8])) $user->setLastName($data[8]);
+                if (isset($data[9])) $user->setGender($data[9]);
+                if (isset($data[10])) $user->setDateOfBirth($data[10]);
+                if (isset($data[11])) $user->setCountry($data[11]);
+                if (isset($data[12])) $user->setCity($data[12]);
+                if (isset($data[13])) $user->setLookingFor($data[13]);
+                if (isset($data[14])) $user->setMusicPreferences($data[14]);
+                if (isset($data[15])) $user->setPhotos(array_slice($data, 15, 4));
+                if (isset($data[19])) $user->setOccupation($data[19]);
+                if (isset($data[20])) $user->setSmokingStatus($data[20]);
+                if (isset($data[21])) $user->setHobbies($data[21]);
+                if (isset($data[22])) $user->setAboutMe($data[22]);
+                if (isset($data[23])) $user->setSubscription($data[23]);
+                if (isset($data[24])) $user->setSubscriptionStartDate($data[24]);
+                if (isset($data[25])) $user->setSubscriptionEndDate($data[25]);
                 fclose($handle);
                 return $user;
             }

@@ -26,6 +26,24 @@ if (!$user) {
     echo "User not found.";
     exit;
 }
+
+// Check if the visitor has already liked this user
+function isLikeExist($userId, $likedUserId, $likesFile)
+{
+    if (($handle = fopen($likesFile, 'r')) !== FALSE) {
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            if ($data[0] == $userId && $data[1] == $likedUserId) {
+                fclose($handle);
+                return true;
+            }
+        }
+        fclose($handle);
+    }
+    return false;
+}
+
+$likesFile = '../data/profile_likes.csv';
+$hasLiked = isLikeExist($visitorId, $userId, $likesFile);
 ?>
 
 <!DOCTYPE html>
@@ -105,24 +123,21 @@ if (!$user) {
                     <p>User information not found.</p>
                 <?php endif; ?>
             </div>
-            <!-- Alert container for errors -->
-            <div id="alert-container" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
-                <strong class="font-bold">Error!</strong>
-                <span class="block sm:inline" id="alert-message"></span>
-                <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-                    <svg id="close-alert" class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <title>Close</title>
-                        <path d="M14.348 14.849a1 1 0 0 1-1.415 0L10 11.415l-2.933 2.934a1 1 0 1 1-1.415-1.415l2.934-2.933-2.934-2.933a1 1 0 1 1 1.415-1.415L10 8.586l2.933-2.934a1 1 0 0 1 1.416 1.416L11.416 10l2.933 2.933a1 1 0 0 1-1.416 1.416z" />
+            <!-- Like/Dislike button -->
+            <div class="flex flex-row justify-center gap-20 w-full items-center">
+                <div class="flex gap-2 items-center">
+                    <a href="app.php">Back</a>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
                     </svg>
-                </span>
+                </div>
+                <button id="like-button" class="flex flex-row gap-4 font-bold text-white px-4 py-2 rounded-xl border-[2px] border-white items-center bg-gradient-to-r from-rose_primary to-sky_primary">
+                    <span><?php echo $hasLiked ? 'Dislike' : 'Like'; ?></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path fill-rule="evenodd" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" clip-rule="evenodd" />
+                    </svg>
+                </button>
             </div>
-            <!-- Like button -->
-            <button id="like-button" class="flex flex-row gap-4 font-bold text-white px-4 py-2 rounded-xl border-[2px] border-white items-center bg-gradient-to-r from-rose_primary to-sky_primary">
-                <span>Like</span>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                    <path fill-rule="evenodd" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" clip-rule="evenodd" />
-                </svg>
-            </button>
         </div>
     </section>
 
@@ -143,32 +158,30 @@ if (!$user) {
         // Auto click the first indicator on load
         indicators.length > 0 && indicators[0].click();
 
-        // Like button functionality
+        // Like/Dislike button functionality
         document.getElementById('like-button').addEventListener('click', function() {
-            fetch('/src/security/like_profile.php', {
+            const isLiked = this.querySelector('span').textContent === 'Dislike';
+            const action = isLiked ? 'unlike' : 'like';
+            const likerId = <?php echo json_encode($_SESSION["user_id"]); ?>;
+            const likedId = <?php echo json_encode($user->getId()); ?>;
+
+            fetch('/src/action/' + action + '_profile.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: 'liker_id=<?php echo $_SESSION["user_id"]; ?>&liked_id=<?php echo $user->getId(); ?>'
+                    body: 'liker_id=' + likerId + '&liked_id=' + likedId
                 }).then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        window.location.href = '/src/pages/app.php';
+                        const button = document.getElementById('like-button').querySelector('span');
+                        button.textContent = isLiked ? 'Like' : 'Dislike';
                     } else {
-                        const alertContainer = document.getElementById('alert-container');
-                        const alertMessage = document.getElementById('alert-message');
-                        alertMessage.innerText = data.message;
-                        alertContainer.classList.remove('hidden');
+                        console.error('Error:', data.message);
                     }
                 }).catch(error => {
                     console.error('Error:', error);
                 });
-        });
-
-        // Close alert functionality
-        document.getElementById('close-alert').addEventListener('click', function() {
-            document.getElementById('alert-container').classList.add('hidden');
         });
     </script>
 </body>

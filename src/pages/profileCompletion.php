@@ -1,7 +1,5 @@
 <?php
 session_start();
-// Uncomment the following line to debug and print the session variables
-// echo '<pre>' . print_r($_SESSION, true) . '</pre>';
 ?>
 
 <!DOCTYPE html>

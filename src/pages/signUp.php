@@ -50,6 +50,11 @@
 
                 <!-- Sign-up form -->
                 <form action="/src/security/signUp.php" method="POST">
+                    <!-- Email field -->
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-bold mb-2">Email <span class="font-bold text-red-600">*</span></label>
+                        <input type="email" id="email" name="email" class="bg-black border border-medium_gray rounded-lg w-full py-2 px-3 leading-tight focus:outline-none focus:border-white">
+                    </div>
                     <!-- Username field -->
                     <div class="mb-4">
                         <label for="username" class="block text-sm font-bold mb-2">Username <span class="font-bold text-red-600">*</span></label>
@@ -81,7 +86,7 @@
                         </button>
                     </div>
                     <!-- Link to the sign-in page -->
-                    <span class="text-sm items-left text-gray-400">Have an account yet? <a class="text-sky_primary font-semibold" href="/src/pages/sign-in.php">Sign In</a></span>
+                    <span class="text-sm items-left text-gray-400">Have an account yet? <a class="text-sky_primary font-semibold" href="/src/pages/signIn.php">Sign In</a></span>
                 </form>
 
                 <!-- JavaScript for password validation -->
