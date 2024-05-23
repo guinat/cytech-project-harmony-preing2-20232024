@@ -374,17 +374,17 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
 
         <!-- Report User Modal -->
         <div id="report-user-modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-            <div class="bg-white p-6 rounded-lg max-w-md w-full">
+            <div class="bg-black p-6 rounded-lg max-w-md w-full">
                 <h2 id="modal-title" class="text-xl font-bold mb-4">Signaler le profil</h2>
                 <p id="modal-content" class="mb-4">Êtes-vous sûr de vouloir signaler ce profil?</p>
                 <label for="report-reason" class="block mb-2">Raison:</label>
-                <select id="report-reason" class="w-full mb-4 p-2 border rounded">
+                <select id="report-reason" class="w-full mb-4 p-2 border rounded bg-medium_gray">
                     <option value="harassment">Harcèlement</option>
                     <option value="spam">Spam</option>
                     <option value="inappropriate">Contenu inapproprié</option>
                     <option value="other">Autre</option>
                 </select>
-                <input type="text" id="other-report-reason" class="w-full mb-4 p-2 border rounded hidden" placeholder="Votre raison">
+                <input type="text" id="other-report-reason" class="w-full mb-4 p-2 border rounded hidden bg-medium_gray text-white" placeholder="Votre raison">
                 <div class="flex justify-end">
                     <button id="cancel-report-user" class="bg-gray-300 text-gray-700 p-2 rounded mr-2">Annuler</button>
                     <button id="confirm-report-user" class="bg-yellow-500 text-white p-2 rounded">Signaler</button>
@@ -394,17 +394,17 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
 
         <!-- Block User Modal -->
         <div id="block-user-modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
-            <div class="bg-white p-6 rounded-lg max-w-md w-full">
+            <div class="bg-black p-6 rounded-lg max-w-md w-full">
                 <h2 id="modal-title" class="text-xl font-bold mb-4">Block User</h2>
                 <p id="modal-content" class="mb-4">Are you sure you want to block this user?</p>
                 <label for="block-reason" class="block mb-2">Reason:</label>
-                <select id="block-reason" class="w-full mb-4 p-2 border rounded">
+                <select id="block-reason" class="w-full mb-4 p-2 border rounded bg-medium_gray">
                     <option value="spam">Spam</option>
                     <option value="harassment">Harassment</option>
                     <option value="inappropriate">Inappropriate Content</option>
                     <option value="other">Other</option>
                 </select>
-                <input type="text" id="other-reason" class="w-full mb-4 p-2 border rounded hidden" placeholder="Enter your reason">
+                <input type="text" id="other-reason" class="w-full mb-4 p-2 border rounded hidden bg-medium_gray text-white" placeholder="Enter your reason">
                 <div class="flex justify-end">
                     <button id="cancel-block-user" class="bg-gray-300 text-gray-700 p-2 rounded mr-2">Cancel</button>
                     <button id="confirm-block-user" class="bg-red-500 text-white p-2 rounded">Block</button>
@@ -643,7 +643,7 @@ $conversations = getConversations($currentUserId); // Get the conversations for 
                 modalTitle.textContent = 'Bloquer le profil';
                 modalContent.innerHTML = `
             <p>Êtes-vous sûr de vouloir bloquer ce profil ?</p>
-            <select id="block-reason" class="w-full p-2 border rounded">
+            <select id="block-reason" class="w-full p-2 border rounded bg-medium_gray">
                 <option value="harassment">Harcèlement</option>
                 <option value="spam">Spam</option>
                 <option value="inappropriate">Contenu inapproprié</option>
